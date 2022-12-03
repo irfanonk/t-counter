@@ -1,4 +1,4 @@
-import {Dimensions, Platform} from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import {
   ICommonTheme,
   ThemeAssets,
@@ -8,7 +8,7 @@ import {
   ThemeWeights,
 } from './types';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // Naming source: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight#Common_weight_name_mapping
 export const WEIGHTS: ThemeWeights = {
@@ -18,6 +18,7 @@ export const WEIGHTS: ThemeWeights = {
   h3: Platform.OS === 'ios' ? '700' : 'normal',
   h4: Platform.OS === 'ios' ? '700' : 'normal',
   h5: Platform.OS === 'ios' ? '600' : 'normal',
+  h6: Platform.OS === 'ios' ? '500' : 'normal',
   p: 'normal',
 
   thin: Platform.OS === 'ios' ? '100' : 'normal',
@@ -118,6 +119,7 @@ export const FONTS: ThemeFonts = {
   h3: 'OpenSans-Bold',
   h4: 'OpenSans-Bold',
   h5: 'OpenSans-SemiBold',
+  h6: 'OpenSans-SemiBold',
   p: 'OpenSans-Regular',
 
   // based on fontWeight
@@ -140,14 +142,15 @@ export const LINE_HEIGHTS: ThemeLineHeights = {
   h3: 43,
   h4: 33,
   h5: 24,
-  p: 22,
+  h6: 20,
+  p: 18,
 };
 
 export const THEME: ICommonTheme = {
   icons: ICONS,
-  assets: {...ICONS, ...ASSETS},
+  assets: { ...ICONS, ...ASSETS },
   fonts: FONTS,
   weights: WEIGHTS,
   lines: LINE_HEIGHTS,
-  sizes: {width, height},
+  sizes: { width, height },
 };

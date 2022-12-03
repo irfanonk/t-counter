@@ -18,7 +18,7 @@ export default () => {
       <Stack.Screen
         name="Counter"
         component={Counter}
-        options={{...screenOptions.onlyTitle, title: 'Sayaç'}}
+        options={{...screenOptions.counter, title: 'Sayaç'}}
       />
       <Stack.Screen
         name="Settings"

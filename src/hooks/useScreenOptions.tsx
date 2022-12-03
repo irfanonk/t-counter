@@ -16,6 +16,7 @@ import Text from '../components/Text';
 import useTheme from '../hooks/useTheme';
 import Button from '../components/Button';
 import Block from '../components/Block';
+import {Ionicons} from '@expo/vector-icons';
 
 export default () => {
   const {t} = useTranslation();
@@ -100,6 +101,45 @@ export default () => {
           onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}>
           <Image source={icons.menu} radius={0} color={colors.white} />
         </Button>
+      ),
+    },
+    counter: {
+      ...menu,
+      headerTitleContainerStyle: {marginLeft: 0},
+      headerLeft: () => null,
+      headerRight: () => (
+        <Block row flex={0} align="center" marginRight={sizes.padding}>
+          <TouchableOpacity
+            style={{marginRight: sizes.sm}}
+            onPress={() =>
+              navigation.navigate('Screens', {
+                screen: 'Settings',
+              })
+            }>
+            <Ionicons
+              size={25}
+              name="ios-settings-outline"
+              color={colors.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Screens', {
+                screen: 'SavedCounts',
+              })
+            }>
+            <Ionicons size={25} name="save-outline" color={colors.icon} />
+            <Block
+              flex={0}
+              right={0}
+              width={sizes.s}
+              height={sizes.s}
+              radius={sizes.xs}
+              position="absolute"
+              gradient={gradients?.primary}
+            />
+          </TouchableOpacity>
+        </Block>
       ),
     },
     onlyTitle: {

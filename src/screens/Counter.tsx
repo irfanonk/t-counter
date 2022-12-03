@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Vibration,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/core';
 
 import {useData, useTheme, useTranslation} from '../hooks/';
 import * as regex from '../constants/regex';
@@ -21,35 +20,50 @@ import {
 } from '../components/';
 import {Ionicons} from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import {getValueFromAsync} from '../utils/storageFunctions';
+import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
 import {DataContext} from '../context/DataContext';
+import dayjs from 'dayjs';
 
 const isAndroid = Platform.OS === 'android';
 
-interface IRegistration {
-  stop: number;
-  warn: number;
+interface Limit {
+  stop: string;
+  warn: string;
 }
 // @pattern wait/vibrate/wait in ms
 const WARN_PATTERN = [0, 400, 200];
 const STOP_PATTERN = [0, 600, 200];
 
-const Counter = () => {
+const Counter = ({route, navigation}) => {
   const {settings} = useContext(DataContext);
-  console.log('settings _c', settings);
+
+  const item = route?.params?.item || undefined;
+
+  const {assets, colors, gradients, sizes} = useTheme();
 
   const {isDark} = useData();
   const {t} = useTranslation();
-  const navigation = useNavigation();
-  const route = useRoute();
   const [count, setCount] = useState(0);
-  const [limit, setLimit] = useState<IRegistration>({
-    stop: 0,
-    warn: 0,
+  const [limit, setLimit] = useState<Limit>({
+    stop: '',
+    warn: '',
   });
   const [message, setMessage] = useState<string>('');
   const [modalVisible, setModalVisible] = useState(false);
-  const {assets, colors, gradients, sizes} = useTheme();
+  const [title, setTitle] = useState('');
+
+  useEffect(() => {
+    if (item) {
+      setCount(item.count);
+      if (item.stop > 0) {
+        setLimit((state) => ({...state, stop: item.stop}));
+      }
+      if (item.warn > 0) {
+        setLimit((state) => ({...state, warn: item.warn}));
+      }
+      setTitle(item?.title);
+    }
+  }, [item, route.params]);
 
   const handleChange = useCallback(
     (value) => {
@@ -79,7 +93,7 @@ const Counter = () => {
       }
       if (limit.warn > 0 && limit.warn === count + 1) {
         console.log('warn');
-        setMessage('Uyarı limitine ulşatınız!');
+        setMessage('Uyarı limitine ulaşatınız!');
 
         Vibration.vibrate(WARN_PATTERN, true);
         setTimeout(() => {
@@ -95,6 +109,43 @@ const Counter = () => {
     clearMessage();
   };
 
+  const onSavePress = async () => {
+    console.log('time', dayjs().unix());
+    if (!title) return setModalVisible(false);
+
+    try {
+      let currentSavedItems =
+        JSON.parse((await getValueFromAsync('saved')) as string) || [];
+      let selectedItem = currentSavedItems.find(
+        (elm: any) => elm.title === title,
+      );
+      if (selectedItem) {
+        (selectedItem.count = count),
+          (selectedItem.stop = limit.stop),
+          (selectedItem.warn = limit.warn);
+      } else {
+        const newSaveItem = {
+          title,
+          count,
+          stop: limit.stop,
+          warn: limit.warn,
+          createdAt: dayjs().unix(),
+        };
+        currentSavedItems?.push(newSaveItem);
+      }
+
+      await saveValueForAsync('saved', JSON.stringify(currentSavedItems));
+      setMessage('Kaydedildi');
+      setTimeout(() => {
+        clearMessage();
+      }, 2000);
+    } catch (error) {
+      alert('Kaydederken hata oldu!');
+    } finally {
+      setModalVisible(false);
+    }
+  };
+
   const clearMessage = () => {
     setMessage('');
   };
@@ -108,22 +159,23 @@ const Counter = () => {
         onRequestClose={() => {
           setModalVisible(!modalVisible);
         }}>
-        <Block center black>
-          <Block center paddingHorizontal={sizes.sm}>
+        <Block center>
+          <Block center color={colors.white} paddingHorizontal={sizes.sm}>
             <Input
               label="Başlık"
               autoCapitalize="none"
               marginBottom={sizes.m}
               marginRight={sizes.xs}
-              keyboardType="default"
               placeholder="Başlık"
-              onChangeText={(value) => handleChange({stop: +value || 0})}
+              value={title}
+              onChangeText={(value) => setTitle(value)}
             />
             <Block marginTop={sizes.xl} flex={0} row center>
               <Button
+                onPress={onSavePress}
                 width={'50%'}
                 marginRight={sizes.base}
-                gradient={gradients.success}>
+                gradient={gradients.primary}>
                 <Text
                   white
                   bold
@@ -132,7 +184,10 @@ const Counter = () => {
                   Kaydet
                 </Text>
               </Button>
-              <Button width={'50%'} gradient={gradients.secondary}>
+              <Button
+                onPress={() => setModalVisible(false)}
+                width={'50%'}
+                gradient={gradients.secondary}>
                 <Text
                   white
                   bold
@@ -219,6 +274,7 @@ const Counter = () => {
                   marginRight={sizes.xs}
                   keyboardType="number-pad"
                   placeholder="Dur"
+                  value={limit.stop.toString()}
                   success={Boolean(limit.stop > 0)}
                   onChangeText={(value) => handleChange({stop: +value || 0})}
                 />
@@ -226,7 +282,7 @@ const Counter = () => {
                   style={{
                     width: '50%',
                   }}
-                  value={limit.warn}
+                  value={limit.warn.toString()}
                   autoCapitalize="none"
                   marginBottom={sizes.m}
                   marginLeft={sizes.xs}
@@ -316,17 +372,6 @@ const Counter = () => {
                   <Ionicons
                     size={20}
                     name="save-outline"
-                    color={colors.primary}
-                  />
-                </Button>
-                <Button
-                  onPress={() => navigation.navigate('Settings')}
-                  outlined
-                  gray
-                  shadow={!isAndroid}>
-                  <Ionicons
-                    size={20}
-                    name="ios-settings-outline"
                     color={colors.primary}
                   />
                 </Button>

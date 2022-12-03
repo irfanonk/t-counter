@@ -35,6 +35,7 @@ const Typography = (props: ITextProps) => {
     h3,
     h4,
     h5,
+    h6,
     p,
     font,
     align,
@@ -128,6 +129,12 @@ const Typography = (props: ITextProps) => {
         lineHeight: lines.h5,
         fontWeight: weights.h5,
         fontFamily: fonts.h5,
+      }),
+      ...(h6 && {
+        fontSize: sizes.h6,
+        lineHeight: lines.h6,
+        fontWeight: weights.h6,
+        fontFamily: fonts.h6,
       }),
       ...(p && {
         fontSize: sizes.p,

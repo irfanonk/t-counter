@@ -17,21 +17,22 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.irfanonk.t.counter"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#CB0C9F"
       },
-      "package": "com.irfanonk.rnsoftuikitfree"
+      "package": "com.irfanonk.t.counter"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "3f22f3ae-9e1f-4a5a-b80a-319cdbf58b82"
+        "projectId": "f2004e42-3a3b-46ba-91cc-5c9ee8eaf4fd"
       }
     }
   }

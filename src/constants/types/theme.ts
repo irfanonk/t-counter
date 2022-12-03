@@ -25,7 +25,7 @@ export interface ISpacing
     | 'paddingRight'
     | 'paddingTop'
     | 'paddingBottom'
-  > {}
+  > { }
 
 export type TWeight =
   /** fontWeight: 400 */
@@ -135,6 +135,7 @@ export interface ThemeSizes {
   h3: number;
   h4: number;
   h5: number;
+  h6: number;
   p: number;
 
   buttonBorder: number;
@@ -194,6 +195,7 @@ export interface ThemeWeights {
   h3?: TextStyle['fontWeight'];
   h4?: TextStyle['fontWeight'];
   h5?: TextStyle['fontWeight'];
+  h6?: TextStyle['fontWeight'];
   p?: TextStyle['fontWeight'];
 
   thin: TextStyle['fontWeight'];
@@ -287,6 +289,7 @@ export interface ThemeFonts {
   h3: string;
   h4: string;
   h5: string;
+  h6: string;
   p: string;
   thin: string;
   extralight: string;
@@ -306,5 +309,6 @@ export interface ThemeLineHeights {
   h3: number;
   h4: number;
   h5: number;
+  h6: number;
   p: number;
 }

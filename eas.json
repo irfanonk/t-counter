@@ -13,6 +13,13 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {},
+      "ios": {
+        "appleId": "onk.irfan@gmail.com",
+        "ascAppId": "6444911613",
+        "appleTeamId": "C99MV6Y4DC"
+      }
+    }
   }
 }

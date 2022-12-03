@@ -6,7 +6,7 @@ import {
   ThemeSpacing,
 } from './types';
 
-import {THEME as commonTheme} from './theme';
+import { THEME as commonTheme } from './theme';
 
 export const COLORS: ThemeColors = {
   // default text color
@@ -111,7 +111,8 @@ export const SIZES: ThemeSizes = {
   h3: 32,
   h4: 24,
   h5: 18,
-  p: 16,
+  h6: 14,
+  p: 11,
 
   // button sizes
   buttonBorder: 1,
@@ -184,5 +185,5 @@ export const THEME: ITheme = {
   ...commonTheme,
   colors: COLORS,
   gradients: GRADIENTS,
-  sizes: {...SIZES, ...commonTheme.sizes, ...SPACING},
+  sizes: { ...SIZES, ...commonTheme.sizes, ...SPACING },
 };
