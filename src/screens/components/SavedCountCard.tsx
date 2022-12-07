@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Animated, Dimensions, StyleSheet, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Block, Image, Text} from '../../components';
@@ -23,12 +23,20 @@ interface SavedCountCardProps {
   y: Animated.Value;
   index: number;
   item: any;
+  onDeletePress: (createdAt: string) => Promise<void>;
 }
 
-const SavedCountCard = ({y, item, index}: SavedCountCardProps) => {
+const SavedCountCard = ({
+  y,
+  item,
+  index,
+  onDeletePress,
+}: SavedCountCardProps) => {
   const {title, count, stop, warn, createdAt} = item;
   const {gradients, colors, sizes} = useTheme();
   const navigation = useNavigation();
+
+  const [isDeleting, setIsDeleting] = useState('');
 
   const position = Animated.subtract(index * CARD_HEIGHT, y);
   const isDisappearing = -CARD_HEIGHT;
@@ -94,14 +102,36 @@ const SavedCountCard = ({y, item, index}: SavedCountCardProps) => {
             {dayjs.unix(createdAt).format('DD/MM/YYYY hh:ss')}
           </Text>
         </Block>
-        <Block align="flex-end">
+        <Block row justify="space-between">
+          {isDeleting === createdAt ? (
+            <Block row>
+              <TouchableOpacity onPress={() => setIsDeleting('')}>
+                <Ionicons
+                  size={28}
+                  name="chevron-back-circle-outline"
+                  color={colors.text}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => onDeletePress(createdAt)}>
+                <Ionicons
+                  size={28}
+                  color={colors.danger}
+                  name="checkmark-done-circle-outline"
+                />
+              </TouchableOpacity>
+            </Block>
+          ) : (
+            <TouchableOpacity onPress={() => setIsDeleting(createdAt)}>
+              <Ionicons size={28} name="trash" color={colors.text} />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Counter', {
                 item: item,
               })
             }>
-            <Ionicons size={30} name="log-in" color={colors.text} />
+            <Ionicons size={28} name="log-in" color={colors.text} />
           </TouchableOpacity>
         </Block>
       </Block>

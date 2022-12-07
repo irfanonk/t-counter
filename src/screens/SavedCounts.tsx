@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {Animated, FlatList, ActivityIndicator} from 'react-native';
 import {Block, Image, Button} from '../components';
 
-import SavedItemCard from './components/SavedCountCard';
+import SavedCountCard from './components/SavedCountCard';
 import {Ionicons} from '@expo/vector-icons';
 import useTheme from '../hooks/useTheme';
-import {getValueFromAsync} from '../utils/storageFunctions';
+import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -37,6 +37,15 @@ const SavedCounts = () => {
     })();
   }, []);
 
+  const deleteSavedCount = async (createdAt: string) => {
+    console.log('createdAt', createdAt);
+    const _savedCounts = savedCounts.filter(
+      (count) => count.createdAt !== createdAt,
+    );
+    await saveValueForAsync('saved', JSON.stringify(_savedCounts));
+    setSavedCounts(_savedCounts);
+  };
+
   return (
     <Block>
       <Image
@@ -57,7 +66,10 @@ const SavedCounts = () => {
           bounces={true}
           data={savedCounts}
           renderItem={({item, index}) => (
-            <SavedItemCard {...{index, item, y}} />
+            <SavedCountCard
+              onDeletePress={deleteSavedCount}
+              {...{index, item, y}}
+            />
           )}
           keyExtractor={({index}): number => index}
           {...{onScroll}}
