@@ -9,89 +9,6 @@ import {getValueFromAsync} from '../utils/storageFunctions';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
-const mockData = [
-  {
-    id: 0,
-    title: 'test 0',
-    count: 100,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-  {
-    id: 1,
-    title: 'test 1',
-    count: 200,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-  {
-    id: 2,
-    title: 'test 2',
-    count: 100,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-  {
-    id: 3,
-    title: 'test 3',
-    count: 100,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-  {
-    id: 4,
-    title: 'tes 4',
-    count: 100,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-  {
-    id: 5,
-    title: 'test 5',
-    count: 100,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-  {
-    id: 6,
-    title: 'test 6',
-    count: 100,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-  {
-    id: 7,
-    title: 'test 7',
-    count: 100,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-  {
-    id: 8,
-    title: 'test 8',
-    count: 100,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-  {
-    id: 9,
-    title: 'test 9',
-    count: 100,
-    stop: 100,
-    warn: 50,
-    createdAt: 12323,
-  },
-];
-
 const SavedCounts = () => {
   const {assets, colors, sizes, gradients} = useTheme();
   const y = new Animated.Value(0);
@@ -142,7 +59,7 @@ const SavedCounts = () => {
           renderItem={({item, index}) => (
             <SavedItemCard {...{index, item, y}} />
           )}
-          keyExtractor={(item): any => item.id}
+          keyExtractor={({index}): number => index}
           {...{onScroll}}
         />
       )}

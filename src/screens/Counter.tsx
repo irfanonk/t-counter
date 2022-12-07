@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Vibration,
   View,
+  Alert,
 } from 'react-native';
 
 import {useData, useTheme, useTranslation} from '../hooks/';
@@ -26,6 +27,7 @@ import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
 import {DataContext} from '../context/DataContext';
 import dayjs from 'dayjs';
 import useStateCallback from '../hooks/useStateCallback';
+import {useIsFocused} from '@react-navigation/native';
 
 const isAndroid = Platform.OS === 'android';
 const {width, height} = Dimensions.get('window');
@@ -38,6 +40,8 @@ const WARN_PATTERN = [0, 400, 200];
 const STOP_PATTERN = [0, 600, 200];
 
 const Counter = ({route, navigation}) => {
+  const isFocused = useIsFocused();
+
   const {settings} = useContext(DataContext);
 
   const item = route?.params?.item || undefined;
@@ -54,18 +58,79 @@ const Counter = ({route, navigation}) => {
   const [message, setMessage] = useState<string>('');
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      const item =
+        JSON.parse((await getValueFromAsync('latest')) as string) || {};
+      if (item && Object.keys(item).length !== 0) {
+        handleInitialLoad(
+          item.count,
+          item.stop || 0,
+          item.warn || 0,
+          item?.title,
+        );
+      }
+    })();
+
+    return () => {};
+  }, []);
+
   useEffect(() => {
     if (item) {
-      setCount(item.count);
-      if (item.stop > 0) {
-        setLimit((state) => ({...state, stop: item.stop}));
-      }
-      if (item.warn > 0) {
-        setLimit((state) => ({...state, warn: item.warn}));
-      }
-      setTitle(item?.title);
+      handleInitialLoad(
+        item.count,
+        item.stop || 0,
+        item.warn || 0,
+        item?.title,
+      );
     }
+    return () => {};
   }, [item, route.params]);
+
+  useEffect(() => {
+    const backAction = () => {
+      if (isFocused) {
+        Alert.alert('Çıkış!', 'Uygulamadan çıkmak istediğinize emin misiniz?', [
+          {
+            text: 'Hayır',
+            onPress: () => null,
+            style: 'cancel',
+          },
+          {text: 'Evet', onPress: onPressExit},
+        ]);
+        return true;
+      }
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
+
+  const onPressExit = async () => {
+    const latestCount = {
+      count: count,
+      stop: limit.stop,
+      warn: limit.warn,
+    };
+    await saveValueForAsync('latest', JSON.stringify(latestCount));
+
+    BackHandler.exitApp();
+  };
+
+  const handleInitialLoad = (
+    count: number,
+    stop: number,
+    warn: number,
+    title?: string,
+  ) => {
+    setCount(count);
+    setLimit((state) => ({...state, stop}));
+    setLimit((state) => ({...state, warn}));
+    setTitle(title);
+  };
 
   const handleChange = useCallback(
     (value) => {

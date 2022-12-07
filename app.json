@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "tally counter",
+    "name": "Tally Counter",
     "slug": "t-counter",
     "description": "React Native t-counter",
     "primaryColor": "#CB0C9F",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {

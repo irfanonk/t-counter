@@ -13,21 +13,18 @@ export default () => {
   const {isDark, theme, setTheme} = useData();
 
   /* set the status bar based on isDark constant */
-  useEffect(() => {
-    // (async () => {
-    //   const _settings = (await getValueFromAsync('settings')) || {
-    //     warnVibrate: true,
-    //     counterVibrate: true,
-    //   };
-    //   await saveValueForAsync('settings', JSON.stringify(_settings));
-    // })();
+  // useEffect(() => {
 
-    Platform.OS === 'android' && StatusBar.setTranslucent(true);
-    StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content');
-    return () => {
-      StatusBar.setBarStyle('default');
-    };
-  }, [isDark]);
+  //   Platform.OS === 'android' && StatusBar.setTranslucent(true);
+  //   StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content');
+  //   return () => {
+  //     StatusBar.setBarStyle('default');
+  //   };
+  // }, [isDark]);
+
+  useEffect(() => {
+    StatusBar.setHidden(true);
+  }, []);
 
   // load custom fonts
   const [fontsLoaded] = useFonts({
