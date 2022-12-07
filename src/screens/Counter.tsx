@@ -277,92 +277,84 @@ const Counter = ({route, navigation}) => {
               resizeMode="cover"
               paddingLeft={sizes.sm}
               source={assets.background}
-              height={sizes.height * 0.3}></Image>
+              height={height * 0.3}></Image>
+            <Block
+              position="absolute"
+              top={40}
+              blur
+              flex={0}
+              intensity={90}
+              overflow="hidden"
+              justify="space-evenly"
+              tint={colors.blurTint}
+              paddingVertical={sizes.sm}
+              marginBottom={sizes.sm}>
+              <Block
+                row
+                flex={0}
+                align="center"
+                justify="center"
+                marginBottom={sizes.sm}
+                paddingHorizontal={sizes.xxl}>
+                <Block
+                  flex={0}
+                  height={1}
+                  width="50%"
+                  end={[1, 0]}
+                  start={[0, 1]}
+                  gradient={gradients.divider}
+                />
+                <Text center marginHorizontal={sizes.s}>
+                  Limit
+                </Text>
+
+                <Block
+                  flex={0}
+                  height={1}
+                  width="50%"
+                  end={[0, 1]}
+                  start={[1, 0]}
+                  gradient={gradients.divider}
+                />
+              </Block>
+              <Block flex={0} row center paddingHorizontal={sizes.sm}>
+                <Input
+                  style={{
+                    width: '50%',
+                  }}
+                  autoCapitalize="none"
+                  marginBottom={sizes.m}
+                  marginRight={sizes.xs}
+                  keyboardType="number-pad"
+                  placeholder="Dur"
+                  value={limit.stop.toString()}
+                  success={Boolean(limit.stop > 0)}
+                  onChangeText={(value) => handleChange({stop: +value || 0})}
+                />
+                <Input
+                  style={{
+                    width: '50%',
+                  }}
+                  value={limit.warn.toString()}
+                  autoCapitalize="none"
+                  marginBottom={sizes.m}
+                  marginLeft={sizes.xs}
+                  keyboardType="number-pad"
+                  placeholder="Uyar"
+                  success={Boolean(limit.warn > 0)}
+                  danger={Boolean(limit.stop > 0 && limit.stop < limit.warn)}
+                  onChangeText={(value) => handleChange({warn: +value || 0})}
+                />
+              </Block>
+            </Block>
           </Block>
-          <Block
-            keyboard
-            behavior={!isAndroid ? 'padding' : 'height'}
-            marginTop={-(sizes.height * 0.3 - sizes.xl)}>
+          <Block keyboard behavior={!isAndroid ? 'padding' : 'height'}>
             <Block
               flex={0}
               radius={sizes.sm}
               marginHorizontal="8%"
               shadow={!isAndroid} // disabled shadow on Android due to blur overlay + elevation issue
             >
-              <Block
-                blur
-                flex={0}
-                intensity={90}
-                radius={sizes.sm}
-                overflow="hidden"
-                justify="space-evenly"
-                tint={colors.blurTint}
-                paddingVertical={sizes.sm}
-                marginBottom={sizes.sm}>
-                <Block
-                  row
-                  flex={0}
-                  align="center"
-                  justify="center"
-                  marginBottom={sizes.sm}
-                  paddingHorizontal={sizes.xxl}>
-                  <Block
-                    flex={0}
-                    height={1}
-                    width="50%"
-                    end={[1, 0]}
-                    start={[0, 1]}
-                    gradient={gradients.divider}
-                  />
-                  <Text center marginHorizontal={sizes.s}>
-                    Limit
-                  </Text>
-
-                  <Block
-                    flex={0}
-                    height={1}
-                    width="50%"
-                    end={[0, 1]}
-                    start={[1, 0]}
-                    gradient={gradients.divider}
-                  />
-                  {/* <Ionicons
-                  onPress={onResetLimit}
-                  size={20}
-                  name="return-down-back-sharp"
-                  color={colors.primary}
-                /> */}
-                </Block>
-                <Block flex={0} row center paddingHorizontal={sizes.sm}>
-                  <Input
-                    style={{
-                      width: '50%',
-                    }}
-                    autoCapitalize="none"
-                    marginBottom={sizes.m}
-                    marginRight={sizes.xs}
-                    keyboardType="number-pad"
-                    placeholder="Dur"
-                    value={limit.stop.toString()}
-                    success={Boolean(limit.stop > 0)}
-                    onChangeText={(value) => handleChange({stop: +value || 0})}
-                  />
-                  <Input
-                    style={{
-                      width: '50%',
-                    }}
-                    value={limit.warn.toString()}
-                    autoCapitalize="none"
-                    marginBottom={sizes.m}
-                    marginLeft={sizes.xs}
-                    keyboardType="number-pad"
-                    placeholder="Uyar"
-                    success={Boolean(limit.warn > 0)}
-                    danger={Boolean(limit.stop > 0 && limit.stop < limit.warn)}
-                    onChangeText={(value) => handleChange({warn: +value || 0})}
-                  />
-                </Block>
-              </Block>
               <Block
                 blur
                 flex={0}
@@ -468,32 +460,3 @@ const Counter = ({route, navigation}) => {
 };
 
 export default Counter;
-
-const styles = {
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  animatedView: {
-    width,
-    backgroundColor: '#0a5386',
-    elevation: 2,
-    position: 'absolute',
-    bottom: 0,
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  exitTitleText: {
-    textAlign: 'center',
-    color: '#ffffff',
-    marginRight: 10,
-  },
-  exitText: {
-    color: '#e5933a',
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-  },
-};
