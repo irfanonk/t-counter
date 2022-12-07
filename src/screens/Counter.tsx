@@ -343,22 +343,24 @@ const Counter = ({route, navigation}) => {
                     marginRight={sizes.xs}
                     keyboardType="number-pad"
                     placeholder="Dur"
-                    value={limit.stop.toString()}
-                    success={Boolean(limit.stop > 0)}
+                    value={limit.stop}
+                    success={Boolean(+limit.stop > 0)}
                     onChangeText={(value) => handleChange({stop: value})}
                   />
                 </Block>
                 <Block>
                   <Input
                     label="Uyar"
-                    value={limit.warn.toString()}
+                    value={limit.warn}
                     autoCapitalize="none"
                     marginBottom={sizes.m}
                     marginLeft={sizes.xs}
                     keyboardType="number-pad"
                     placeholder="Uyar"
-                    success={Boolean(limit.warn > 0)}
-                    danger={Boolean(limit.stop > 0 && limit.stop < limit.warn)}
+                    success={Boolean(+limit.warn > 0)}
+                    danger={Boolean(
+                      +limit.stop > 0 && +limit.stop < +limit.warn,
+                    )}
                     onChangeText={(value) => handleChange({warn: value})}
                   />
                   <Block justify="flex-end" row>
