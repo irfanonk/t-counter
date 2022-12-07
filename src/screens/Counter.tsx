@@ -61,14 +61,16 @@ const Counter = ({route, navigation}) => {
 
   useEffect(() => {
     (async () => {
-      const item =
+      const latestItem =
         JSON.parse((await getValueFromAsync('latest')) as string) || {};
-      if (item && Object.keys(item).length !== 0) {
+      console.log('latest', latestItem);
+
+      if (latestItem && Object.keys(latestItem).length !== 0) {
         handleInitialLoad(
-          item.count,
-          item.stop || 0,
-          item.warn || 0,
-          item?.title,
+          latestItem.count,
+          latestItem.stop || 0,
+          latestItem.warn || 0,
+          latestItem?.title,
         );
       }
     })();
