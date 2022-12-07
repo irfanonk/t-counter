@@ -28,6 +28,7 @@ import {DataContext} from '../context/DataContext';
 import dayjs from 'dayjs';
 import useStateCallback from '../hooks/useStateCallback';
 import {useIsFocused} from '@react-navigation/native';
+import {multiply} from 'react-native-reanimated';
 
 const isAndroid = Platform.OS === 'android';
 const {width, height} = Dimensions.get('window');
@@ -55,6 +56,7 @@ const Counter = ({route, navigation}) => {
     stop: '',
     warn: '',
   });
+  const [isWarnAtMulitply, setIsWarnAtMulitply] = useState(false);
   const [message, setMessage] = useState<string>('');
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState('');
@@ -141,28 +143,44 @@ const Counter = ({route, navigation}) => {
     [setLimit],
   );
 
+  const handleChangeMultiply = () => {
+    if (!limit.warn || limit.warn === '0') {
+      return;
+    }
+    setIsWarnAtMulitply(!isWarnAtMulitply);
+  };
+
   const handleCountChange = () => {
     if (message) {
       clearMessage();
     }
-    if (limit.stop > 0 && limit.stop === count) {
+    if (+limit.stop > 0 && +limit.stop === count) {
       return;
     }
-    if (settings?.warnVibrate) {
-      if (limit.stop > 0 && limit.stop === count + 1) {
-        console.log('stop');
-        setMessage('Tamamladınız!');
-        setCount(count + 1);
+    if (+limit.stop > 0 && +limit.stop === count + 1) {
+      setMessage('Tamamladınız!');
+      setCount(count + 1);
+
+      if (settings?.warnVibrate) {
         Vibration.vibrate(STOP_PATTERN, true);
         setTimeout(() => {
           Vibration.cancel();
         }, 1400);
-        return;
       }
-      if (limit.warn > 0 && limit.warn === count + 1) {
-        console.log('warn');
-        setMessage('Uyarı limitine ulaşatınız!');
+      return;
+    }
+    if (+limit.warn > 0 && +limit.warn === count + 1) {
+      setMessage('Uyarı limitine ulaşatınız!');
 
+      if (settings?.warnVibrate) {
+        Vibration.vibrate(WARN_PATTERN, true);
+        setTimeout(() => {
+          Vibration.cancel();
+        }, 900);
+      }
+    } else if (isWarnAtMulitply && (count + 1) % +limit.warn == 0) {
+      setMessage('Uyarı limitinin katına ulaşatınız!');
+      if (settings?.warnVibrate) {
         Vibration.vibrate(WARN_PATTERN, true);
         setTimeout(() => {
           Vibration.cancel();
@@ -279,7 +297,7 @@ const Counter = ({route, navigation}) => {
               height={height * 0.3}></Image>
             <Block
               position="absolute"
-              top={40}
+              top={20}
               blur
               flex={0}
               intensity={90}
@@ -316,34 +334,43 @@ const Counter = ({route, navigation}) => {
                   gradient={gradients.divider}
                 />
               </Block>
-              <Block flex={0} row center paddingHorizontal={sizes.sm}>
-                <Input
-                  style={{
-                    width: '50%',
-                  }}
-                  autoCapitalize="none"
-                  marginBottom={sizes.m}
-                  marginRight={sizes.xs}
-                  keyboardType="number-pad"
-                  placeholder="Dur"
-                  value={limit.stop.toString()}
-                  success={Boolean(limit.stop > 0)}
-                  onChangeText={(value) => handleChange({stop: value})}
-                />
-                <Input
-                  style={{
-                    width: '50%',
-                  }}
-                  value={limit.warn.toString()}
-                  autoCapitalize="none"
-                  marginBottom={sizes.m}
-                  marginLeft={sizes.xs}
-                  keyboardType="number-pad"
-                  placeholder="Uyar"
-                  success={Boolean(limit.warn > 0)}
-                  danger={Boolean(limit.stop > 0 && limit.stop < limit.warn)}
-                  onChangeText={(value) => handleChange({warn: value})}
-                />
+              <Block flex={0} row center paddingHorizontal={sizes.l}>
+                <Block>
+                  <Input
+                    label="Dur"
+                    autoCapitalize="none"
+                    marginBottom={sizes.m}
+                    marginRight={sizes.xs}
+                    keyboardType="number-pad"
+                    placeholder="Dur"
+                    value={limit.stop.toString()}
+                    success={Boolean(limit.stop > 0)}
+                    onChangeText={(value) => handleChange({stop: value})}
+                  />
+                </Block>
+                <Block>
+                  <Input
+                    label="Uyar"
+                    value={limit.warn.toString()}
+                    autoCapitalize="none"
+                    marginBottom={sizes.m}
+                    marginLeft={sizes.xs}
+                    keyboardType="number-pad"
+                    placeholder="Uyar"
+                    success={Boolean(limit.warn > 0)}
+                    danger={Boolean(limit.stop > 0 && limit.stop < limit.warn)}
+                    onChangeText={(value) => handleChange({warn: value})}
+                  />
+                  <Block justify="flex-end" row>
+                    <Text marginRight={10} size={10}>
+                      Katları
+                    </Text>
+                    <Switch
+                      checked={isWarnAtMulitply}
+                      onPress={handleChangeMultiply}
+                    />
+                  </Block>
+                </Block>
               </Block>
             </Block>
           </Block>

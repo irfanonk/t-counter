@@ -49,39 +49,6 @@ const Settings = () => {
             </Button>
           </Image>
 
-          {/* profile: stats */}
-          {/* <Block
-            flex={0}
-            radius={sizes.sm}
-            shadow={!isAndroid} // disabled shadow on Android due to blur overlay + elevation issue
-            marginTop={-sizes.l}
-            marginHorizontal="8%"
-            color="rgba(255,255,255,0.2)">
-            <Block
-              row
-              blur
-              flex={0}
-              intensity={100}
-              radius={sizes.sm}
-              overflow="hidden"
-              tint={colors.blurTint}
-              justify="space-evenly"
-              paddingVertical={sizes.sm}
-              renderToHardwareTextureAndroid>
-              <Block align="center">
-                <Text h5>{user?.stats?.posts}</Text>
-                <Text>Toplam Sayaç</Text>
-              </Block>
-              <Block align="center">
-                <Text h5>{(user?.stats?.followers || 0) / 1000}k</Text>
-                <Text>{t('profile.followers')}</Text>
-              </Block>
-              <Block align="center">
-                <Text h5>{(user?.stats?.following || 0) / 1000}k</Text>
-                <Text>{t('profile.following')}</Text>
-              </Block>
-            </Block>
-          </Block> */}
           <Block
             flex={0}
             radius={sizes.sm}
