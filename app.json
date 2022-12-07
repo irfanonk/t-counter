@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Tally Counter",
+    "name": "Tally ounter",
     "slug": "t-counter",
     "description": "React Native t-counter",
     "primaryColor": "#CB0C9F",
@@ -17,15 +17,17 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "buildNumber": 2,
       "supportsTablet": true,
       "bundleIdentifier": "com.irfanonk.t.counter"
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#CB0C9F"
       },
-      "package": "com.irfanonk.t.counter"
+      "package": "com.irfanonk.rnsoftuikitfree"
     },
     "web": {
       "favicon": "./assets/favicon.png"
