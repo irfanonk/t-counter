@@ -63,7 +63,6 @@ const Counter = ({route, navigation}) => {
     (async () => {
       const latestItem =
         JSON.parse((await getValueFromAsync('latest')) as string) || {};
-      console.log('latest', latestItem);
 
       if (latestItem && Object.keys(latestItem).length !== 0) {
         handleInitialLoad(
@@ -329,7 +328,7 @@ const Counter = ({route, navigation}) => {
                   placeholder="Dur"
                   value={limit.stop.toString()}
                   success={Boolean(limit.stop > 0)}
-                  onChangeText={(value) => handleChange({stop: +value || 0})}
+                  onChangeText={(value) => handleChange({stop: value})}
                 />
                 <Input
                   style={{
@@ -343,7 +342,7 @@ const Counter = ({route, navigation}) => {
                   placeholder="Uyar"
                   success={Boolean(limit.warn > 0)}
                   danger={Boolean(limit.stop > 0 && limit.stop < limit.warn)}
-                  onChangeText={(value) => handleChange({warn: +value || 0})}
+                  onChangeText={(value) => handleChange({warn: value})}
                 />
               </Block>
             </Block>
