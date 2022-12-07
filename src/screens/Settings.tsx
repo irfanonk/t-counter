@@ -16,7 +16,6 @@ export interface Settings {
 }
 const Settings = () => {
   const {settings, saveSetting} = useContext(DataContext);
-  console.log('settings _s', settings);
   const {user} = useData();
   const {t} = useTranslation();
   const navigation = useNavigation();
@@ -33,10 +32,9 @@ const Settings = () => {
   };
 
   return (
-    <Block safe marginTop={sizes.md}>
+    <Block safe>
       <Block
         scroll
-        paddingHorizontal={sizes.s}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: sizes.padding}}>
         <Block flex={0}>
@@ -45,13 +43,8 @@ const Settings = () => {
             resizeMode="cover"
             padding={sizes.sm}
             paddingBottom={sizes.l}
-            radius={sizes.cardRadius}
             source={assets.background}>
-            <Button
-              row
-              flex={0}
-              justify="flex-start"
-              onPress={() => navigation.goBack()}>
+            <Button row flex={0} justify="flex-start">
               <Ionicons size={25} name="settings" color={colors.white} />
             </Button>
           </Image>

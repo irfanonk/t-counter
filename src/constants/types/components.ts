@@ -646,6 +646,10 @@ export interface IModalProps extends ModalProps {
    */
   id?: string;
   /**
+ * animation type
+ */
+  animationType?: 'none' | 'slide' | 'fade';
+  /**
    * Renders the Modal content
    */
   children?: React.ReactNode;

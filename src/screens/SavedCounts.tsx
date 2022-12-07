@@ -1,25 +1,103 @@
-import React, {useCallback, useEffect, useContext, useState} from 'react';
-import {Platform, Linking, ActivityIndicator, FlatList} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {Animated, FlatList, ActivityIndicator} from 'react-native';
+import {Block, Image, Button} from '../components';
+
+import SavedItemCard from './components/SavedCountCard';
 import {Ionicons} from '@expo/vector-icons';
-import {useNavigation} from '@react-navigation/core';
+import useTheme from '../hooks/useTheme';
+import {getValueFromAsync} from '../utils/storageFunctions';
 
-import {Block, Button, Image, Switch, Text} from '../components';
-import {useData, useTheme, useTranslation} from '../hooks';
-import {
-  saveValueForAsync,
-  clearStorageAsync,
-  getValueFromAsync,
-} from '../utils/storageFunctions';
-import {DataContext, DataContextType} from '../context/DataContext';
-import dayjs from 'dayjs';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
-const isAndroid = Platform.OS === 'android';
+const mockData = [
+  {
+    id: 0,
+    title: 'test 0',
+    count: 100,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+  {
+    id: 1,
+    title: 'test 1',
+    count: 200,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+  {
+    id: 2,
+    title: 'test 2',
+    count: 100,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+  {
+    id: 3,
+    title: 'test 3',
+    count: 100,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+  {
+    id: 4,
+    title: 'tes 4',
+    count: 100,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+  {
+    id: 5,
+    title: 'test 5',
+    count: 100,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+  {
+    id: 6,
+    title: 'test 6',
+    count: 100,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+  {
+    id: 7,
+    title: 'test 7',
+    count: 100,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+  {
+    id: 8,
+    title: 'test 8',
+    count: 100,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+  {
+    id: 9,
+    title: 'test 9',
+    count: 100,
+    stop: 100,
+    warn: 50,
+    createdAt: 12323,
+  },
+];
 
 const SavedCounts = () => {
-  const {t} = useTranslation();
-  const navigation = useNavigation();
   const {assets, colors, sizes, gradients} = useTheme();
+  const y = new Animated.Value(0);
+  const onScroll = Animated.event([{nativeEvent: {contentOffset: {y}}}], {
+    useNativeDriver: true,
+  });
 
   const [isLoading, setIsLoading] = useState(true);
   const [savedCounts, setSavedCounts] = useState([]);
@@ -42,123 +120,32 @@ const SavedCounts = () => {
     })();
   }, []);
 
-  const SavedItem = (item) => {
-    const {count, title, stop, warn, createdAt} = item;
-    return (
-      <Block
-        row
-        blur
-        flex={0}
-        height={40}
-        radius={sizes.sm}
-        overflow="hidden"
-        justify="space-evenly">
-        <Block align="center">
-          <Text h6>{title}</Text>
-        </Block>
-        <Block align="center">
-          <Text h6>{count}</Text>
-        </Block>
-        <Block align="center">
-          <Text>
-            {stop}/{warn}{' '}
-          </Text>
-        </Block>
-        <Block align="center">
-          <Text size={10}>
-            {dayjs.unix(createdAt).format('DD/MM/YYYY hh:ss')}
-          </Text>
-        </Block>
-        <Block align="center">
-          <Text size={10}>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('Counter', {
-                  item: item,
-                })
-              }>
-              <Ionicons size={20} name="log-in" color={colors.primary} />
-            </TouchableOpacity>
-          </Text>
-        </Block>
-      </Block>
-    );
-  };
-
-  const ListHeader = () => (
-    <Block
-      row
-      blur
-      flex={0}
-      marginVertical={sizes.sm}
-      style={{
-        borderBottomColor: colors.primary,
-        borderBottomWidth: 1,
-      }}
-      overflow="hidden"
-      justify="space-evenly">
-      <Block align="center">
-        <Text>Başlık</Text>
-      </Block>
-      <Block align="center">
-        <Text>Sayaç</Text>
-      </Block>
-      <Block align="center">
-        <Text>Dur/Uyar</Text>
-      </Block>
-      <Block align="center">
-        <Text>Tarih</Text>
-      </Block>
-      <Block align="center">
-        <Text>Devam Et</Text>
-      </Block>
-    </Block>
-  );
-
   return (
-    <Block safe marginTop={sizes.md}>
-      <Block paddingHorizontal={sizes.s} showsVerticalScrollIndicator={false}>
-        <Block flex={0}>
-          <Image
-            background
-            resizeMode="cover"
-            padding={sizes.sm}
-            paddingBottom={sizes.l}
-            radius={sizes.cardRadius}
-            source={assets.background}>
-            <Button
-              row
-              flex={0}
-              justify="flex-start"
-              onPress={() => navigation.goBack()}>
-              <Ionicons size={25} name="settings" color={colors.white} />
-            </Button>
-          </Image>
-
-          <Block
-            flex={0}
-            radius={sizes.sm}
-            shadow={!isAndroid} // disabled shadow on Android due to blur overlay + elevation issue
-            marginTop={sizes.l}
-            color="rgba(255,255,255,0.2)">
-            {isLoading ? (
-              <ActivityIndicator />
-            ) : (
-              <>
-                <FlatList
-                  data={savedCounts}
-                  ListHeaderComponent={ListHeader}
-                  showsVerticalScrollIndicator={false}
-                  keyExtractor={(item) => `${item?.createdAt}`}
-                  style={{paddingHorizontal: sizes.padding}}
-                  contentContainerStyle={{paddingBottom: sizes.l}}
-                  renderItem={({item}) => <SavedItem {...item} />}
-                />
-              </>
-            )}
-          </Block>
-        </Block>
-      </Block>
+    <Block>
+      <Image
+        background
+        resizeMode="cover"
+        padding={sizes.sm}
+        paddingBottom={sizes.l}
+        source={assets.background}>
+        <Button row flex={0} justify="flex-start">
+          <Ionicons size={25} name="save" color={colors.white} />
+        </Button>
+      </Image>
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <AnimatedFlatList
+          scrollEventThrottle={16}
+          bounces={true}
+          data={savedCounts}
+          renderItem={({item, index}) => (
+            <SavedItemCard {...{index, item, y}} />
+          )}
+          keyExtractor={(item): any => item.id}
+          {...{onScroll}}
+        />
+      )}
     </Block>
   );
 };

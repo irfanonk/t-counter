@@ -32,7 +32,7 @@ export default () => {
     headerRightContainerStyle: {paddingRight: sizes.s},
     cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
     headerTitle: ({children}: StackHeaderTitleProps) => (
-      <Text p>{children}</Text>
+      <Text h5>{children}</Text>
     ),
     headerLeft: () => (
       <Button onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}>

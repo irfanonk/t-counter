@@ -10,6 +10,7 @@ import Image from './Image';
 
 const Modal = ({
   id = 'Modal',
+  animationType,
   children,
   style,
   onRequestClose,
@@ -28,16 +29,16 @@ const Modal = ({
       {...props}
       transparent
       style={modalStyles}
-      animationType="slide"
+      animationType={animationType}
       onRequestClose={onRequestClose}>
-      <Block justify="flex-end">
-        <Block safe card flex={0} color="rgba(0,0,0,0.8)">
+      <Block justify="center">
+        <Block scroll card flex={0}>
           <Button
             top={0}
             right={0}
             position="absolute"
             onPress={() => onRequestClose?.()}>
-            <Image source={assets.close} color={colors.white} />
+            <Image source={assets.close} color={colors.black} />
           </Button>
           <Block
             flex={0}
