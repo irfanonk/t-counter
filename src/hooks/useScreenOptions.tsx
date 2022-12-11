@@ -8,7 +8,6 @@ import {useNavigation} from '@react-navigation/core';
 import {DrawerActions} from '@react-navigation/native';
 import {StackHeaderOptions} from '@react-navigation/stack/lib/typescript/src/types';
 
-import {useData} from './useData';
 import {useTranslation} from './useTranslation';
 
 import Image from '../components/Image';
@@ -20,12 +19,11 @@ import {Ionicons} from '@expo/vector-icons';
 
 export default () => {
   const {t} = useTranslation();
-  const {user} = useData();
   const navigation = useNavigation();
   const {icons, colors, gradients, sizes} = useTheme();
 
   const menu = {
-    headerStyle: {elevation: 0},
+    headerStyle: {elevation: 0, backgroundColor: colors.background},
     headerTitleAlign: 'left',
     headerTitleContainerStyle: {marginLeft: -sizes.sm},
     headerLeftContainerStyle: {paddingLeft: sizes.s},
@@ -208,12 +206,7 @@ export default () => {
                 DrawerActions.jumpTo('Screens', {screen: 'Profile'}),
               )
             }>
-            <Image
-              radius={6}
-              width={24}
-              height={24}
-              source={{uri: user.avatar}}
-            />
+            <Image radius={6} width={24} height={24} source={''} />
           </TouchableOpacity>
         </Block>
       ),

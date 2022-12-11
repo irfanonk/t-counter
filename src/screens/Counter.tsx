@@ -289,15 +289,7 @@ const Counter = ({route, navigation}) => {
       <Block safe>
         <Block>
           <Block flex={0} style={{zIndex: 0}}>
-            <Image
-              background
-              resizeMode="cover"
-              paddingLeft={sizes.sm}
-              source={assets.background}
-              height={height * 0.3}></Image>
             <Block
-              position="absolute"
-              top={20}
               blur
               flex={0}
               intensity={90}

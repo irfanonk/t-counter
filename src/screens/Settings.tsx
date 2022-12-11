@@ -16,7 +16,7 @@ export interface Settings {
 }
 const Settings = () => {
   const {settings, saveSetting} = useContext(DataContext);
-  const {user} = useData();
+  const {isDark, handleIsDark} = useData();
   const {t} = useTranslation();
   const navigation = useNavigation();
   const {assets, colors, sizes} = useTheme();
@@ -38,24 +38,21 @@ const Settings = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: sizes.padding}}>
         <Block flex={0}>
-          <Image
-            background
-            resizeMode="cover"
+          <Block
+            color={colors.primary}
             padding={sizes.sm}
-            paddingBottom={sizes.l}
-            source={assets.background}>
+            paddingBottom={sizes.l}>
             <Button row flex={0} justify="flex-start">
               <Ionicons size={25} name="settings" color={colors.white} />
             </Button>
-          </Image>
+          </Block>
 
           <Block
             flex={0}
             radius={sizes.sm}
             shadow={!isAndroid} // disabled shadow on Android due to blur overlay + elevation issue
             marginTop={sizes.l}
-            marginHorizontal="8%"
-            color="rgba(255,255,255,0.2)">
+            marginHorizontal="8%">
             <Block
               blur
               flex={0}
@@ -87,6 +84,18 @@ const Settings = () => {
                     <Switch
                       checked={settings.counterVibrate}
                       onPress={() => handleSettings('counterVibrate')}
+                    />
+                  </Block>
+                  <Block
+                    row
+                    flex={0}
+                    align="center"
+                    justify="space-between"
+                    marginTop={sizes.s}>
+                    <Text>Koyu tema </Text>
+                    <Switch
+                      checked={isDark}
+                      onPress={() => handleIsDark(!isDark)}
                     />
                   </Block>
                 </>

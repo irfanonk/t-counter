@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Tally counter",
+    "name": "Tally Counter",
     "slug": "t-counter",
-    "description": "React Native t-counter",
+    "description": "t-counter",
     "primaryColor": "#CB0C9F",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -17,7 +17,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": 2,
+      "buildNumber": "1",
       "supportsTablet": true,
       "bundleIdentifier": "com.irfanonk.t.counter"
     },
