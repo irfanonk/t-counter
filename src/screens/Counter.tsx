@@ -65,12 +65,13 @@ const Counter = ({route, navigation}) => {
     (async () => {
       const latestItem =
         JSON.parse((await getValueFromAsync('latest')) as string) || {};
+      console.log('latestItem', latestItem);
 
       if (latestItem && Object.keys(latestItem).length !== 0) {
         handleInitialLoad(
           latestItem.count,
-          latestItem.stop || 0,
-          latestItem.warn || 0,
+          latestItem.stop || '',
+          latestItem.warn || '',
           latestItem?.title,
         );
       }
@@ -114,10 +115,12 @@ const Counter = ({route, navigation}) => {
 
   const onPressExit = async () => {
     const latestCount = {
-      count: count,
+      count,
       stop: limit.stop,
       warn: limit.warn,
     };
+    console.log('latestCount', latestCount, JSON.stringify(latestCount));
+
     await saveValueForAsync('latest', JSON.stringify(latestCount));
 
     BackHandler.exitApp();
@@ -290,10 +293,10 @@ const Counter = ({route, navigation}) => {
         <Block>
           <Block flex={0} style={{zIndex: 0}}>
             <Block
-              blur
               flex={0}
+              blur
               intensity={90}
-              overflow="hidden"
+              height={200}
               justify="space-evenly"
               tint={colors.blurTint}
               paddingVertical={sizes.sm}
@@ -355,15 +358,36 @@ const Counter = ({route, navigation}) => {
                     )}
                     onChangeText={(value) => handleChange({warn: value})}
                   />
-                  <Block justify="flex-end" row>
-                    <Text marginRight={10} size={10}>
-                      Katları
-                    </Text>
-                    <Switch
-                      checked={isWarnAtMulitply}
-                      onPress={handleChangeMultiply}
+                </Block>
+              </Block>
+              <Block justify="space-evenly" row paddingHorizontal={sizes.l}>
+                <Block align="center" row>
+                  <Text marginRight={10} size={10}>
+                    Sil
+                  </Text>
+                  <Button
+                    onPress={() =>
+                      setLimit({
+                        stop: '',
+                        warn: '',
+                      })
+                    }
+                    shadow={!isAndroid}>
+                    <Ionicons
+                      size={20}
+                      name="return-down-back-sharp"
+                      color={colors.gray}
                     />
-                  </Block>
+                  </Button>
+                </Block>
+                <Block align="center" row>
+                  <Text marginRight={10} size={10}>
+                    Katları
+                  </Text>
+                  <Switch
+                    checked={isWarnAtMulitply}
+                    onPress={handleChangeMultiply}
+                  />
                 </Block>
               </Block>
             </Block>
