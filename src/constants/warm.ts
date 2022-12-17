@@ -10,13 +10,13 @@ import { THEME as commonTheme } from './theme';
 
 export const COLORS: ThemeColors = {
     // default text color
-    text: '#ECDBBA',
+    text: '#CE9461',
 
     // base colors
     /** UI color for #primary */
-    primary: '#474E68',
+    primary: '#FCFFE7',
     /** UI color for #secondary */
-    secondary: '#50577A', // '#8392AB',
+    secondary: '#DEA057', // '#8392AB',
     /** UI color for #tertiary */
     tertiary: '#E8AE4C',
 
@@ -37,21 +37,21 @@ export const COLORS: ThemeColors = {
     /** UI color for #warning */
     warning: '#FFC107',
     /** UI color for #success */
-    success: '#82D616',
+    success: '#1E5128',
     /** UI color for #info */
     info: '#17C1E8',
 
     /** UI colors for navigation & card */
     card: '#FFFFFF',
-    background: '#404258',
+    background: '#E0D8B0',
 
     /** UI color for shadowColor */
     shadow: '#000000',
     overlay: 'rgba(0,0,0,0.3)',
 
     /** UI color for input borderColor on focus */
-    focus: '#ECDBBA',
-    input: '#ECDBBA',
+    focus: '#FCFFE7',
+    input: '#FCFFE7',
 
     /** UI color for switch checked/active color */
     switchOn: '#3A416F',

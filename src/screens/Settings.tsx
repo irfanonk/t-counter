@@ -7,16 +7,34 @@ import {Block, Button, Image, Switch, Text} from '../components';
 import {useData, useTheme, useTranslation} from '../hooks';
 import {saveValueForAsync, clearStorageAsync} from '../utils/storageFunctions';
 import {DataContext} from '../context/DataContext';
-
+import {light, dark, warm, nature} from '../constants';
 const isAndroid = Platform.OS === 'android';
 
 export interface Settings {
   warnVibrate: boolean;
   counterVibrate: boolean;
 }
+const COLORS = [
+  {
+    title: 'light',
+    color: light.colors.background,
+  },
+  {
+    title: 'dark',
+    color: dark.colors.background,
+  },
+  {
+    title: 'warm',
+    color: warm.colors.background,
+  },
+  {
+    title: 'nature',
+    color: nature.colors.background,
+  },
+];
 const Settings = () => {
   const {settings, saveSetting} = useContext(DataContext);
-  const {isDark, handleIsDark} = useData();
+  const {themeType, handleThemeChange} = useData();
   const {t} = useTranslation();
   const navigation = useNavigation();
   const {assets, colors, sizes} = useTheme();
@@ -43,7 +61,7 @@ const Settings = () => {
             padding={sizes.sm}
             paddingBottom={sizes.l}>
             <Button row flex={0} justify="flex-start">
-              <Ionicons size={25} name="settings" color={colors.white} />
+              <Ionicons size={25} name="settings" color={colors.gray} />
             </Button>
           </Block>
 
@@ -86,17 +104,53 @@ const Settings = () => {
                       onPress={() => handleSettings('counterVibrate')}
                     />
                   </Block>
+                </>
+              )}
+            </Block>
+            <Block
+              marginTop={10}
+              blur
+              flex={0}
+              intensity={100}
+              radius={sizes.sm}
+              overflow="hidden"
+              tint={colors.blurTint}
+              justify="space-evenly"
+              padding={sizes.sm}
+              renderToHardwareTextureAndroid>
+              {!settings ? (
+                <ActivityIndicator />
+              ) : (
+                <>
                   <Block
-                    row
                     flex={0}
                     align="center"
                     justify="space-between"
                     marginTop={sizes.s}>
-                    <Text>Koyu tema </Text>
-                    <Switch
-                      checked={isDark}
-                      onPress={() => handleIsDark(!isDark)}
-                    />
+                    <Block>
+                      <Text>Tema </Text>
+                    </Block>
+                    <Block row>
+                      {COLORS.map((color) => {
+                        return (
+                          <Button
+                            onPress={() => handleThemeChange(color.title)}
+                            color={color.color}
+                            width={20}
+                            height={20}
+                            margin={2}
+                            radius={50}>
+                            {themeType === color.title && (
+                              <Ionicons
+                                size={20}
+                                name="checkmark"
+                                color={colors.success}
+                              />
+                            )}
+                          </Button>
+                        );
+                      })}
+                    </Block>
                   </Block>
                 </>
               )}

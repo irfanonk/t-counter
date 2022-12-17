@@ -48,33 +48,35 @@ const SavedCounts = () => {
 
   return (
     <Block>
-      <Image
-        background
-        resizeMode="cover"
+      <Block
+        flex={0}
+        color={colors.primary}
         padding={sizes.sm}
-        paddingBottom={sizes.l}
-        source={assets.background}>
-        <Button row flex={0} justify="flex-start">
-          <Ionicons size={25} name="save" color={colors.white} />
+        paddingBottom={sizes.l}>
+        <Button row justify="flex-start">
+          <Ionicons size={25} name="save" color={colors.gray} />
         </Button>
-      </Image>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <AnimatedFlatList
-          scrollEventThrottle={16}
-          bounces={true}
-          data={savedCounts}
-          renderItem={({item, index}) => (
-            <SavedCountCard
-              onDeletePress={deleteSavedCount}
-              {...{index, item, y}}
-            />
-          )}
-          keyExtractor={({index}): number => index}
-          {...{onScroll}}
-        />
-      )}
+      </Block>
+
+      <Block marginTop={sizes.l} flex={0}>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <AnimatedFlatList
+            scrollEventThrottle={16}
+            bounces={true}
+            data={savedCounts}
+            renderItem={({item, index}) => (
+              <SavedCountCard
+                onDeletePress={deleteSavedCount}
+                {...{index, item, y}}
+              />
+            )}
+            keyExtractor={({index}): number => index}
+            {...{onScroll}}
+          />
+        )}
+      </Block>
     </Block>
   );
 };

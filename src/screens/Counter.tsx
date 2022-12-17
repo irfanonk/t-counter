@@ -294,10 +294,9 @@ const Counter = ({route, navigation}) => {
           <Block flex={0} style={{zIndex: 0}}>
             <Block
               flex={0}
-              blur
-              intensity={90}
               height={200}
               justify="space-evenly"
+              color={colors.primary}
               tint={colors.blurTint}
               paddingVertical={sizes.sm}
               marginBottom={sizes.sm}>
@@ -478,7 +477,7 @@ const Counter = ({route, navigation}) => {
                     <Ionicons
                       size={20}
                       name="return-down-back-sharp"
-                      color={colors.primary}
+                      color={colors.secondary}
                     />
                   </Button>
 
@@ -490,7 +489,7 @@ const Counter = ({route, navigation}) => {
                     <Ionicons
                       size={20}
                       name="save-outline"
-                      color={colors.primary}
+                      color={colors.secondary}
                     />
                   </Button>
                 </Block>

@@ -10,7 +10,7 @@ import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
 import SettingsProvider from '../context/DataContext';
 
 export default () => {
-  const {isDark, theme, setTheme} = useData();
+  const {themeType, theme, setTheme} = useData();
 
   /* set the status bar based on isDark constant */
   // useEffect(() => {
@@ -41,7 +41,7 @@ export default () => {
 
   const navigationTheme = {
     ...DefaultTheme,
-    dark: isDark,
+    dark: themeType === 'dark',
     colors: {
       ...DefaultTheme.colors,
       border: 'rgba(0,0,0,0)',

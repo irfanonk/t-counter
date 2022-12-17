@@ -10,49 +10,80 @@ import {
   ITheme,
 } from '../constants/types';
 
-import {light, dark} from '../constants';
+import {light, dark, warm, nature} from '../constants';
+import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
 
 export const DataContext = React.createContext({});
 
 export const DataProvider = ({children}: {children: React.ReactNode}) => {
-  const [isDark, setIsDark] = useState(false);
+  const [themeType, setThemeType] = useState('light');
   const [theme, setTheme] = useState<ITheme>(light);
 
   // get isDark mode from storage
-  const getIsDark = useCallback(async () => {
+  // const getIsDark = useCallback(async () => {
+  //   // get preferance gtom storage
+  //   const isDarkJSON = await Storage.getItem('isDark');
+
+  //   if (isDarkJSON !== null) {
+  //     // set isDark / compare if has updated
+  //     setIsDark(JSON.parse(isDarkJSON));
+  //   }
+  // }, [setIsDark]);
+
+  const getTheme = useCallback(async () => {
     // get preferance gtom storage
-    const isDarkJSON = await Storage.getItem('isDark');
+    const _themeType = await getValueFromAsync('themeType');
 
-    if (isDarkJSON !== null) {
+    if (_themeType !== null) {
       // set isDark / compare if has updated
-      setIsDark(JSON.parse(isDarkJSON));
+      setThemeType(JSON.parse(_themeType));
     }
-  }, [setIsDark]);
+  }, [setThemeType]);
 
-  // handle isDark mode
-  const handleIsDark = useCallback(
-    (payload: boolean) => {
+  const handleThemeChange = useCallback(
+    (payload: string) => {
       // set isDark / compare if has updated
-      setIsDark(payload);
+      setThemeType(payload);
       // save preferance to storage
-      Storage.setItem('isDark', JSON.stringify(payload));
+      saveValueForAsync('themeType', JSON.stringify(payload));
+      // Storage.setItem('isDark', JSON.stringify(payload));
     },
-    [setIsDark],
+    [setThemeType],
   );
+  // handle isDark mode
+  // const handleIsDark = useCallback(
+  //   (payload: boolean) => {
+  //     // set isDark / compare if has updated
+  //     setIsDark(payload);
+  //     // save preferance to storage
+  //     Storage.setItem('isDark', JSON.stringify(payload));
+  //   },
+  //   [setIsDark],
+  // );
 
   // get initial data for: isDark & language
   useEffect(() => {
-    getIsDark();
-  }, [getIsDark]);
+    getTheme();
+  }, [getTheme]);
 
   // change theme based on isDark updates
   useEffect(() => {
-    setTheme(isDark ? dark : light);
-  }, [isDark]);
+    const _theme =
+      themeType === 'light'
+        ? light
+        : themeType === 'dark'
+        ? dark
+        : themeType === 'warm'
+        ? warm
+        : themeType === 'nature'
+        ? nature
+        : light;
+    setTheme(_theme);
+  }, [themeType]);
 
   const contextValue = {
-    isDark,
-    handleIsDark,
+    handleThemeChange,
+    themeType,
     theme,
     setTheme,
   };
