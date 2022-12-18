@@ -142,6 +142,7 @@ const Settings = () => {
                       {COLORS.map((color) => {
                         return (
                           <Button
+                            key={color.title}
                             onPress={() => handleThemeChange(color.title)}
                             color={color.color}
                             width={20}

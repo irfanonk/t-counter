@@ -1,4 +1,10 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Animated,
   Dimensions,
@@ -23,7 +29,11 @@ import {
   Modal,
 } from '../components/';
 import {Ionicons} from '@expo/vector-icons';
-import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
+import {
+  clearStorageAsync,
+  getValueFromAsync,
+  saveValueForAsync,
+} from '../utils/storageFunctions';
 import {DataContext} from '../context/DataContext';
 import dayjs from 'dayjs';
 import useStateCallback from '../hooks/useStateCallback';
@@ -49,8 +59,8 @@ const Counter = ({route, navigation}) => {
 
   const {assets, colors, gradients, sizes} = useTheme();
 
-  const {isDark} = useData();
   const {t} = useTranslation();
+
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState<Limit>({
     stop: '',
@@ -61,47 +71,60 @@ const Counter = ({route, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState('');
 
-  useEffect(() => {
-    (async () => {
-      const latestItem =
-        JSON.parse((await getValueFromAsync('latest')) as string) || {};
-      console.log('latestItem', latestItem);
-
-      if (latestItem && Object.keys(latestItem).length !== 0) {
-        handleInitialLoad(
-          latestItem.count,
-          latestItem.stop || '',
-          latestItem.warn || '',
-          latestItem?.title,
-        );
-      }
-    })();
-
-    return () => {};
-  }, []);
+  const latestCountStateRef = React.useRef({
+    count: 0,
+    limit: '',
+    stop: '',
+  });
 
   useEffect(() => {
     if (item) {
       handleInitialLoad(
         item.count,
-        item.stop || 0,
-        item.warn || 0,
+        item.stop || '',
+        item.warn || '',
         item?.title,
       );
+    } else {
+      (async () => {
+        const latestCount = JSON.parse(
+          (await getValueFromAsync('latestCount')) as string,
+        ) || {
+          count: 0,
+          stop: '',
+          limit: '',
+        };
+        console.log('latestCount', latestCount);
+
+        if (latestCount && Object.keys(latestCount).length !== 0) {
+          handleInitialLoad(
+            latestCount.count,
+            latestCount.stop,
+            latestCount.warn,
+            '',
+          );
+        }
+      })();
     }
+
     return () => {};
   }, [item, route.params]);
 
   useEffect(() => {
-    const backAction = () => {
+    const backAction = async () => {
       if (isFocused) {
+        const _latestCount = latestCountStateRef.current;
+        console.log('_latestCount', _latestCount);
+
+        await saveValueForAsync('latestCount', JSON.stringify(_latestCount));
+
         Alert.alert('Çıkış!', 'Uygulamadan çıkmak istediğinize emin misiniz?', [
           {
             text: 'Hayır',
             onPress: () => null,
             style: 'cancel',
           },
-          {text: 'Evet', onPress: onPressExit},
+          {text: 'Evet', onPress: () => BackHandler.exitApp()},
         ]);
         return true;
       }
@@ -112,19 +135,6 @@ const Counter = ({route, navigation}) => {
     );
     return () => backHandler.remove();
   }, []);
-
-  const onPressExit = async () => {
-    const latestCount = {
-      count,
-      stop: limit.stop,
-      warn: limit.warn,
-    };
-    console.log('latestCount', latestCount, JSON.stringify(latestCount));
-
-    await saveValueForAsync('latest', JSON.stringify(latestCount));
-
-    BackHandler.exitApp();
-  };
 
   const handleInitialLoad = (
     count: number,
@@ -141,6 +151,11 @@ const Counter = ({route, navigation}) => {
   const handleChange = useCallback(
     (value) => {
       clearMessage();
+      // to get the lastest state in event listener
+      latestCountStateRef.current = {
+        ...latestCountStateRef.current,
+        ...value,
+      };
       setLimit((state) => ({...state, ...value}));
     },
     [setLimit],
@@ -162,6 +177,11 @@ const Counter = ({route, navigation}) => {
     }
     if (+limit.stop > 0 && +limit.stop === count + 1) {
       setMessage('Tamamladınız!');
+      // to get the lastest state in event listener
+      latestCountStateRef.current = {
+        ...latestCountStateRef.current,
+        count: count + 1,
+      };
       setCount(count + 1);
 
       if (settings?.warnVibrate) {
@@ -191,6 +211,11 @@ const Counter = ({route, navigation}) => {
       }
     }
 
+    // to get the lastest state in event listener
+    latestCountStateRef.current = {
+      ...latestCountStateRef.current,
+      count: count + 1,
+    };
     setCount(count + 1);
   };
   const onLongResetPress = () => {
