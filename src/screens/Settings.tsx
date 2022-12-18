@@ -7,7 +7,7 @@ import {Block, Button, Image, Switch, Text} from '../components';
 import {useData, useTheme, useTranslation} from '../hooks';
 import {saveValueForAsync, clearStorageAsync} from '../utils/storageFunctions';
 import {DataContext} from '../context/DataContext';
-import {light, dark, warm, nature} from '../constants';
+import {light, dark, warm, nature, original} from '../constants';
 const isAndroid = Platform.OS === 'android';
 
 export interface Settings {
@@ -30,6 +30,10 @@ const COLORS = [
   {
     title: 'nature',
     color: nature.colors.background,
+  },
+  {
+    title: 'original',
+    color: original.colors.background,
   },
 ];
 const Settings = () => {
