@@ -67,7 +67,7 @@ export const COLORS: ThemeColors = {
   dribbble: '#EA4C89',
 
   /** icon tint color */
-  icon: '#8392AB',
+  icon: '#fff',
 
   /** blur tint color */
   blurTint: 'default',
