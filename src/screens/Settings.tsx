@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useContext, useState} from 'react';
-import {Platform, Linking, ActivityIndicator} from 'react-native';
+import {ActivityIndicator, Platform, Linking} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/core';
 
@@ -8,6 +8,9 @@ import {useData, useTheme, useTranslation} from '../hooks';
 import {saveValueForAsync, clearStorageAsync} from '../utils/storageFunctions';
 import {DataContext} from '../context/DataContext';
 import {light, dark, warm, nature, original, sky} from '../constants';
+import Constants from 'expo-constants';
+import appJson from '../../app.json';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 const isAndroid = Platform.OS === 'android';
 
 export interface Settings {
@@ -47,14 +50,26 @@ const Settings = () => {
   const navigation = useNavigation();
   const {assets, colors, sizes} = useTheme();
 
-  useEffect(() => {
-    (async () => {
-      // await clearStorageAsync();
-    })();
-  }, []);
+  // for andriod
+  const newUpdateAvailable =
+    Constants.manifest?.version !== appJson.expo.version;
 
   const handleSettings = async (type: string) => {
     saveSetting(type);
+  };
+
+  const onNewUpdatePress = () => {
+    let url = '';
+    if (Platform.OS === 'android') {
+      url =
+        'https://play.google.com/store/apps/details?id=com.irfanonk.rnsoftuikitfree';
+    }
+
+    try {
+      Linking.openURL(url);
+    } catch (error) {
+      alert(`Cannot open URL: ${url}`);
+    }
   };
 
   return (
@@ -167,6 +182,13 @@ const Settings = () => {
           </Block>
         </Block>
       </Block>
+      {newUpdateAvailable && (
+        <Block padding={10} position="absolute" bottom={20}>
+          <TouchableOpacity onPress={onNewUpdatePress}>
+            <Text color={colors.primary}>New Update Available </Text>
+          </TouchableOpacity>
+        </Block>
+      )}
     </Block>
   );
 };

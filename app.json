@@ -4,7 +4,7 @@
     "slug": "t-counter",
     "description": "t-counter",
     "primaryColor": "#CB0C9F",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -22,7 +22,7 @@
       "bundleIdentifier": "com.irfanonk.t.counter"
     },
     "android": {
-      "versionCode": 4,
+      "versionCode": 5,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#CB0C9F"
