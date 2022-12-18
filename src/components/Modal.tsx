@@ -31,14 +31,14 @@ const Modal = ({
       style={modalStyles}
       animationType={animationType}
       onRequestClose={onRequestClose}>
-      <Block justify="center">
-        <Block scroll card flex={0}>
+      <Block color={colors.background} justify="center">
+        <Block scroll flex={0}>
           <Button
             top={0}
             right={0}
             position="absolute"
             onPress={() => onRequestClose?.()}>
-            <Image source={assets.close} color={colors.black} />
+            <Image source={assets.close} color={colors.icon} />
           </Button>
           <Block
             flex={0}

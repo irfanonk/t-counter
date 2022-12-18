@@ -268,13 +268,12 @@ const Counter = ({route, navigation}) => {
     <>
       <Modal
         animationType="slide"
-        transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(!modalVisible);
         }}>
-        <Block center>
-          <Block center color={colors.white} paddingHorizontal={sizes.sm}>
+        <Block flex={0} center>
+          <Block center paddingHorizontal={sizes.sm}>
             <Input
               label="Başlık"
               autoCapitalize="none"
@@ -289,24 +288,16 @@ const Counter = ({route, navigation}) => {
                 onPress={onSavePress}
                 width={'50%'}
                 marginRight={sizes.base}
-                gradient={gradients.primary}>
-                <Text
-                  white
-                  bold
-                  transform="uppercase"
-                  marginHorizontal={sizes.sm}>
+                color={colors.primary}>
+                <Text bold transform="uppercase" marginHorizontal={sizes.sm}>
                   Kaydet
                 </Text>
               </Button>
               <Button
                 onPress={() => setModalVisible(false)}
                 width={'50%'}
-                gradient={gradients.secondary}>
-                <Text
-                  white
-                  bold
-                  transform="uppercase"
-                  marginHorizontal={sizes.sm}>
+                color={colors.secondary}>
+                <Text bold transform="uppercase" marginHorizontal={sizes.sm}>
                   İptal
                 </Text>
               </Button>
