@@ -38,7 +38,7 @@ import {DataContext} from '../context/DataContext';
 import dayjs from 'dayjs';
 import useStateCallback from '../hooks/useStateCallback';
 import {useIsFocused} from '@react-navigation/native';
-import {multiply} from 'react-native-reanimated';
+import {Stopwatch, Timer} from 'react-native-stopwatch-timer';
 
 const isAndroid = Platform.OS === 'android';
 const {width, height} = Dimensions.get('window');
@@ -78,6 +78,9 @@ const Counter = ({route, navigation}) => {
     limit: '',
     stop: '',
   });
+
+  const [isStopwatchStart, setIsStopwatchStart] = useState<boolean>(false);
+  const [resetStopwatch, setResetStopwatch] = useState<boolean>(false);
 
   useEffect(() => {
     if (item) {
@@ -528,6 +531,68 @@ const Counter = ({route, navigation}) => {
                   </Button>
                 </Block>
               </Block>
+              {settings?.stopWatch && (
+                <Block
+                  blur
+                  flex={0}
+                  intensity={90}
+                  radius={sizes.sm}
+                  overflow="hidden"
+                  justify="space-evenly"
+                  row
+                  align="center"
+                  tint={colors.blurTint}
+                  paddingVertical={sizes.sm}
+                  marginTop={sizes.sm}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsStopwatchStart(false);
+                      setResetStopwatch(true);
+                    }}>
+                    <Ionicons
+                      size={30}
+                      name="return-down-back"
+                      color={colors.secondary}
+                    />
+                  </TouchableOpacity>
+
+                  <Stopwatch
+                    laps
+                    secs
+                    start={isStopwatchStart}
+                    //To start
+                    reset={resetStopwatch}
+                    //To reset
+                    options={{
+                      container: {
+                        padding: 5,
+                        borderRadius: 5,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
+                      text: {
+                        fontSize: 25,
+                        color: '#FFF',
+                        marginLeft: 7,
+                      },
+                    }}
+                  />
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsStopwatchStart(!isStopwatchStart);
+                      setResetStopwatch(false);
+                    }}>
+                    <Ionicons
+                      size={30}
+                      name={
+                        isStopwatchStart ? 'stopwatch' : 'stopwatch-outline'
+                      }
+                      color={colors.secondary}
+                    />
+                  </TouchableOpacity>
+                </Block>
+              )}
             </Block>
           </Block>
         </Block>

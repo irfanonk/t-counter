@@ -111,7 +111,7 @@ const Settings = () => {
                   <Block row flex={0} align="center" justify="space-between">
                     <Text>Uyarı titreşimi </Text>
                     <Switch
-                      checked={settings.warnVibrate}
+                      checked={settings?.warnVibrate}
                       onPress={() => handleSettings('warnVibrate')}
                     />
                   </Block>
@@ -123,7 +123,7 @@ const Settings = () => {
                     marginTop={sizes.s}>
                     <Text>Sayaç titreşimi </Text>
                     <Switch
-                      checked={settings.counterVibrate}
+                      checked={settings?.counterVibrate}
                       onPress={() => handleSettings('counterVibrate')}
                     />
                   </Block>
@@ -135,8 +135,20 @@ const Settings = () => {
                     marginTop={sizes.s}>
                     <Text>Sayaç göster/gizle butonu </Text>
                     <Switch
-                      checked={settings.hideCounterBtn}
+                      checked={settings?.hideCounterBtn}
                       onPress={() => handleSettings('hideCounterBtn')}
+                    />
+                  </Block>
+                  <Block
+                    row
+                    flex={0}
+                    align="center"
+                    justify="space-between"
+                    marginTop={sizes.s}>
+                    <Text>Kronometre </Text>
+                    <Switch
+                      checked={settings?.stopWatch || false}
+                      onPress={() => handleSettings('stopWatch')}
                     />
                   </Block>
                 </>
