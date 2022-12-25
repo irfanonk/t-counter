@@ -448,19 +448,21 @@ const Counter = ({route, navigation}) => {
                       {isHideCounter ? '' : count}
                     </Ionicons>
                   </Button>
-                  <Block position="absolute" top={0} right={5}>
-                    <TouchableOpacity
-                      onPress={() => setIsHideCounter(!isHideCounter)}>
-                      <Ionicons
-                        style={{
-                          justifyContent: 'flex-end',
-                        }}
-                        name={isHideCounter ? 'eye-off' : 'eye'}
-                        size={20}
-                        color={colors.white}
-                      />
-                    </TouchableOpacity>
-                  </Block>
+                  {settings?.hideCounterBtn && (
+                    <Block position="absolute" top={0} right={5}>
+                      <TouchableOpacity
+                        onPress={() => setIsHideCounter(!isHideCounter)}>
+                        <Ionicons
+                          style={{
+                            justifyContent: 'flex-end',
+                          }}
+                          name={isHideCounter ? 'eye-off' : 'eye'}
+                          size={20}
+                          color={colors.white}
+                        />
+                      </TouchableOpacity>
+                    </Block>
+                  )}
                 </Block>
               </Block>
               {message.length > 0 && (

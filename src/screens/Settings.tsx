@@ -127,6 +127,18 @@ const Settings = () => {
                       onPress={() => handleSettings('counterVibrate')}
                     />
                   </Block>
+                  <Block
+                    row
+                    flex={0}
+                    align="center"
+                    justify="space-between"
+                    marginTop={sizes.s}>
+                    <Text>Sayaç göster/gizle butonu </Text>
+                    <Switch
+                      checked={settings.hideCounterBtn}
+                      onPress={() => handleSettings('hideCounterBtn')}
+                    />
+                  </Block>
                 </>
               )}
             </Block>
