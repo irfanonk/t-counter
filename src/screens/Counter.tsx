@@ -565,16 +565,17 @@ const Counter = ({route, navigation}) => {
                     //To reset
                     options={{
                       container: {
-                        padding: 5,
-                        borderRadius: 5,
+                        paddingHorizontal: 20,
+                        paddingVertical: 10,
+                        borderRadius: 10,
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
+                        backgroundColor: colors.secondary,
                       },
                       text: {
                         fontSize: 25,
                         color: '#FFF',
-                        marginLeft: 7,
                       },
                     }}
                   />
