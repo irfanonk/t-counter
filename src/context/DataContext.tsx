@@ -1,13 +1,25 @@
 import React, {useState, useEffect} from 'react';
 import {Settings, DataContextType} from './types';
-import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
+import {
+  clearStorageAsync,
+  getValueFromAsync,
+  saveValueForAsync,
+} from '../utils/storageFunctions';
 
 export const DataContext = React.createContext<DataContextType | null>(null);
 
+const DEFAULTSETTINGS = {
+  warnVibrate: true,
+  counterVibrate: true,
+  hideCounterBtn: false,
+  stopWatch: false,
+};
 const DataProvider: React.FC<React.ReactNode> = ({children}) => {
   const [settings, setSettings] = useState<Settings>({
     warnVibrate: undefined,
     counterVibrate: undefined,
+    hideCounterBtn: undefined,
+    stopWatch: undefined,
   });
 
   useEffect(() => {
@@ -15,23 +27,20 @@ const DataProvider: React.FC<React.ReactNode> = ({children}) => {
       // await clearStorageAsync();
       const _settings = (await getValueFromAsync('settings')) || null;
       //   console.log('settings _ctx', _settings);
-
       if (!_settings) {
-        const defaultSettings = {
-          warnVibrate: true,
-          counterVibrate: true,
-        };
         try {
-          await saveValueForAsync('settings', JSON.stringify(defaultSettings));
-          setSettings(defaultSettings);
+          await saveValueForAsync('settings', JSON.stringify(DEFAULTSETTINGS));
+          setSettings(DEFAULTSETTINGS);
         } catch (error) {
           console.log('error', error);
           alert('hata oluştu');
         }
-        return;
+      } else {
+        //if current saved settings do not have newly added properties
+        // merge it with new settings without overriding old keys.
+        const mergedSettings = Object.assign({}, _settings, DEFAULTSETTINGS);
+        setSettings(JSON.parse(mergedSettings));
       }
-
-      setSettings(JSON.parse(_settings));
     })();
   }, []);
 

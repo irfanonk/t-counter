@@ -5,7 +5,11 @@ import {Block, Image, Button} from '../components';
 import SavedCountCard from './components/SavedCountCard';
 import {Ionicons} from '@expo/vector-icons';
 import useTheme from '../hooks/useTheme';
-import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
+import {
+  clearStorageAsync,
+  getValueFromAsync,
+  saveValueForAsync,
+} from '../utils/storageFunctions';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -72,7 +76,7 @@ const SavedCounts = () => {
                 {...{index, item, y}}
               />
             )}
-            keyExtractor={({index}): number => index}
+            keyExtractor={({item, index}): number => index}
             {...{onScroll}}
           />
         )}

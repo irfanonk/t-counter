@@ -560,9 +560,7 @@ const Counter = ({route, navigation}) => {
                     laps
                     secs
                     start={isStopwatchStart}
-                    //To start
                     reset={resetStopwatch}
-                    //To reset
                     options={{
                       container: {
                         paddingHorizontal: 20,
