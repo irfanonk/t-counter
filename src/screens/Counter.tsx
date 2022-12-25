@@ -62,6 +62,8 @@ const Counter = ({route, navigation}) => {
   const {t} = useTranslation();
 
   const [count, setCount] = useState(0);
+  const [isHideCounter, setIsHideCounter] = useState<boolean>(false);
+  const [counterVibrate, setCounterVibrate] = useState(true);
   const [limit, setLimit] = useState<Limit>({
     stop: '',
     warn: '',
@@ -183,6 +185,7 @@ const Counter = ({route, navigation}) => {
         count: count + 1,
       };
       setCount(count + 1);
+      setCounterVibrate(false);
 
       if (settings?.warnVibrate) {
         Vibration.vibrate(STOP_PATTERN, true);
@@ -221,6 +224,7 @@ const Counter = ({route, navigation}) => {
   const onLongResetPress = () => {
     setCount(0);
     clearMessage();
+    setCounterVibrate(true);
   };
 
   const onSavePress = async () => {
@@ -427,12 +431,11 @@ const Counter = ({route, navigation}) => {
                 <Block
                   justify="center"
                   align="center"
-                  height={sizes.xl * 3}
-                  padding={sizes.sm}
+                  height={sizes.xl * 4}
                   radius={20}>
                   <Button
                     disabled={limit.stop > 0 && count === limit.stop}
-                    haptic={settings?.counterVibrate}
+                    haptic={settings?.counterVibrate && counterVibrate}
                     onPress={handleCountChange}
                     color={colors.secondary}
                     shadow={false}
@@ -442,9 +445,22 @@ const Counter = ({route, navigation}) => {
                     marginHorizontal={sizes.sm}
                     outlined={String(colors.gray)}>
                     <Ionicons size={60} color={colors.white}>
-                      {count}
+                      {isHideCounter ? '' : count}
                     </Ionicons>
                   </Button>
+                  <Block position="absolute" top={0} right={5}>
+                    <TouchableOpacity
+                      onPress={() => setIsHideCounter(!isHideCounter)}>
+                      <Ionicons
+                        style={{
+                          justifyContent: 'flex-end',
+                        }}
+                        name={isHideCounter ? 'eye-off' : 'eye'}
+                        size={20}
+                        color={colors.white}
+                      />
+                    </TouchableOpacity>
+                  </Block>
                 </Block>
               </Block>
               {message.length > 0 && (
