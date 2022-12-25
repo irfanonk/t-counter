@@ -163,7 +163,7 @@ const Counter = ({route, navigation}) => {
     [setLimit],
   );
 
-  const handleChangeMultiply = () => {
+  const handleChangeWarnMultiply = () => {
     if (!limit.warn || limit.warn === '0') {
       return;
     }
@@ -400,12 +400,12 @@ const Counter = ({route, navigation}) => {
                   </Button>
                 </Block>
                 <Block align="center" row>
-                  <Text marginRight={10} size={10}>
-                    Katları
+                  <Text marginRight={10} size={9}>
+                    Katlarında Uyar
                   </Text>
                   <Switch
                     checked={isWarnAtMulitply}
-                    onPress={handleChangeMultiply}
+                    onPress={handleChangeWarnMultiply}
                   />
                 </Block>
               </Block>
