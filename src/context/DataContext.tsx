@@ -16,10 +16,10 @@ const DEFAULTSETTINGS = {
 };
 const DataProvider: React.FC<React.ReactNode> = ({children}) => {
   const [settings, setSettings] = useState<Settings>({
-    warnVibrate: undefined,
-    counterVibrate: undefined,
-    hideCounterBtn: undefined,
-    stopWatch: undefined,
+    warnVibrate: false,
+    counterVibrate: false,
+    hideCounterBtn: false,
+    stopWatch: false,
   });
 
   useEffect(() => {
@@ -27,20 +27,19 @@ const DataProvider: React.FC<React.ReactNode> = ({children}) => {
       // await clearStorageAsync();
       const _settings = (await getValueFromAsync('settings')) || null;
       //   console.log('settings _ctx', _settings);
-      if (!_settings) {
-        try {
-          await saveValueForAsync('settings', JSON.stringify(DEFAULTSETTINGS));
-          setSettings(DEFAULTSETTINGS);
-        } catch (error) {
-          console.log('error', error);
-          alert('hata oluştu');
-        }
-      } else {
-        //if current saved settings do not have newly added properties
-        // merge it with new settings without overriding old keys.
-        const mergedSettings = Object.assign({}, _settings, DEFAULTSETTINGS);
-        setSettings(JSON.parse(mergedSettings));
+      if (_settings) {
+        setSettings({
+          ...settings,
+          ...JSON.parse(_settings),
+        });
+        // try {
+        //   await saveValueForAsync('settings', JSON.stringify(_settings));
+        // } catch (error) {
+        //   console.log('error', error);
+        //   alert('hata oluştu');
+        // }
       }
+      // setSettings(JSON.parse(_settings));
     })();
   }, []);
 
