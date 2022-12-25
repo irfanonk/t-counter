@@ -482,7 +482,7 @@ const Counter = ({route, navigation}) => {
                       name="checkmark"
                       color={colors.success}
                     />
-                    <Text color={colors.primary} size={16}>
+                    <Text color={colors.text} size={16}>
                       {message}{' '}
                     </Text>
                   </Block>
