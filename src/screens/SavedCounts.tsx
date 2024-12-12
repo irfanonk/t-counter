@@ -72,11 +72,12 @@ const SavedCounts = () => {
             data={savedCounts}
             renderItem={({item, index}) => (
               <SavedCountCard
+                key={index}
                 onDeletePress={deleteSavedCount}
                 {...{index, item, y}}
               />
             )}
-            keyExtractor={({item, index}): number => index}
+            keyExtractor={({item, index}) => index}
             {...{onScroll}}
           />
         )}

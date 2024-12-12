@@ -94,12 +94,12 @@ const SavedCountCard = ({
 
         <Block>
           <Text color={colors.white}>
-            {stop || 0}/{warn || 0}{' '}
+            Limit {stop || 0}/{warn || 0}{' '}
           </Text>
         </Block>
         <Block>
           <Text color={colors.white}>
-            {dayjs.unix(createdAt).format('DD/MM/YYYY hh:ss')}
+            {dayjs.unix(createdAt).format('DD/MM/YYYY HH:mm')}
           </Text>
         </Block>
         <Block row justify="space-between">

@@ -43,8 +43,8 @@ import {Stopwatch, Timer} from 'react-native-stopwatch-timer';
 const isAndroid = Platform.OS === 'android';
 const {width, height} = Dimensions.get('window');
 interface Limit {
-  stop: string;
-  warn: string;
+  stop: number;
+  warn: number;
 }
 // @pattern wait/vibrate/wait in ms
 const WARN_PATTERN = [0, 400, 200];
@@ -65,8 +65,8 @@ const Counter = ({route, navigation}) => {
   const [isHideCounter, setIsHideCounter] = useState<boolean>(false);
   const [counterVibrate, setCounterVibrate] = useState(true);
   const [limit, setLimit] = useState<Limit>({
-    stop: '',
-    warn: '',
+    stop: 0,
+    warn: 0,
   });
   const [isWarnAtMulitply, setIsWarnAtMulitply] = useState(false);
   const [message, setMessage] = useState<string>('');
@@ -75,8 +75,8 @@ const Counter = ({route, navigation}) => {
 
   const latestCountStateRef = React.useRef({
     count: 0,
-    limit: '',
-    stop: '',
+    limit: 0,
+    stop: 0,
   });
 
   const [isStopwatchStart, setIsStopwatchStart] = useState<boolean>(false);
@@ -86,94 +86,95 @@ const Counter = ({route, navigation}) => {
     if (item) {
       handleInitialLoad(
         item.count,
-        item.stop || '',
-        item.warn || '',
+        item.stop || 0,
+        item.warn || 0,
         item?.title,
       );
     } else {
       (async () => {
-        const latestCount = JSON.parse(
-          (await getValueFromAsync('latestCount')) as string,
-        ) || {
-          count: 0,
-          stop: '',
-          limit: '',
-        };
-        console.log('latestCount', latestCount);
+        const _count = parseInt((await getValueFromAsync('count')) || '0');
+        const _stop = parseInt((await getValueFromAsync('stop')) || '0');
+        const _warn = parseInt((await getValueFromAsync('warn')) || '0');
 
-        if (latestCount && Object.keys(latestCount).length !== 0) {
-          handleInitialLoad(
-            latestCount.count,
-            latestCount.stop,
-            latestCount.warn,
-            '',
-          );
-        }
+        console.log('storage', {
+          _count,
+          _stop,
+          _warn,
+        });
+
+        handleInitialLoad(_count, _stop, _warn, '');
       })();
     }
 
     return () => {};
   }, [item, route.params]);
 
-  useEffect(() => {
-    const backAction = async () => {
-      if (isFocused) {
-        const _latestCount = latestCountStateRef.current;
-        console.log('_latestCount', _latestCount);
+  // useEffect(() => {
+  //   const backAction = async () => {
+  //     if (isFocused) {
+  //       const _latestCount = latestCountStateRef.current;
+  //       console.log('_latestCount', _latestCount);
 
-        await saveValueForAsync('latestCount', JSON.stringify(_latestCount));
+  //       await saveValueForAsync('latestCount', JSON.stringify(_latestCount));
 
-        Alert.alert('Çıkış!', 'Uygulamadan çıkmak istediğinize emin misiniz?', [
-          {
-            text: 'Hayır',
-            onPress: () => null,
-            style: 'cancel',
-          },
-          {text: 'Evet', onPress: () => BackHandler.exitApp()},
-        ]);
-        return true;
-      }
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, []);
+  //       Alert.alert('Çıkış!', 'Uygulamadan çıkmak istediğinize emin misiniz?', [
+  //         {
+  //           text: 'Hayır',
+  //           onPress: () => null,
+  //           style: 'cancel',
+  //         },
+  //         {text: 'Evet', onPress: () => BackHandler.exitApp()},
+  //       ]);
+  //       return true;
+  //     }
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
 
   const handleInitialLoad = (
     count: number,
     stop: number,
     warn: number,
-    title?: string,
+    title: string,
   ) => {
     setCount(count);
-    setLimit((state) => ({...state, stop}));
-    setLimit((state) => ({...state, warn}));
+    setLimit((state) => ({...state, stop, warn}));
     setTitle(title);
   };
 
-  const handleChange = useCallback(
-    (value) => {
+  const handleStop = useCallback(
+    async (value) => {
       clearMessage();
-      // to get the lastest state in event listener
-      latestCountStateRef.current = {
-        ...latestCountStateRef.current,
-        ...value,
-      };
-      setLimit((state) => ({...state, ...value}));
+      await saveValueForAsync('stop', value);
+      setLimit((state) => ({...state, stop: value}));
+    },
+    [setLimit],
+  );
+
+  const handleWarn = useCallback(
+    async (value) => {
+      clearMessage();
+      await saveValueForAsync('warn', value);
+
+      setLimit((state) => ({...state, warn: value}));
     },
     [setLimit],
   );
 
   const handleChangeWarnMultiply = () => {
-    if (!limit.warn || limit.warn === '0') {
+    if (!limit.warn || limit.warn === 0) {
       return;
     }
     setIsWarnAtMulitply(!isWarnAtMulitply);
   };
 
-  const handleCountChange = () => {
+  const handleCountChange = async () => {
+    console.log('count', {count, limit, message});
+
     if (message) {
       clearMessage();
     }
@@ -182,11 +183,8 @@ const Counter = ({route, navigation}) => {
     }
     if (+limit.stop > 0 && +limit.stop === count + 1) {
       setMessage('Tamamladınız!');
-      // to get the lastest state in event listener
-      latestCountStateRef.current = {
-        ...latestCountStateRef.current,
-        count: count + 1,
-      };
+      await saveValueForAsync('count', (count + 1).toString());
+
       setCount(count + 1);
       setCounterVibrate(false);
 
@@ -217,14 +215,11 @@ const Counter = ({route, navigation}) => {
       }
     }
 
-    // to get the lastest state in event listener
-    latestCountStateRef.current = {
-      ...latestCountStateRef.current,
-      count: count + 1,
-    };
+    await saveValueForAsync('count', (count + 1).toString());
     setCount(count + 1);
   };
-  const onLongResetPress = () => {
+  const onLongResetPress = async () => {
+    await saveValueForAsync('count', count.toString());
     setCount(0);
     clearMessage();
     setCounterVibrate(true);
@@ -240,6 +235,7 @@ const Counter = ({route, navigation}) => {
       let selectedItem = currentSavedItems.find(
         (elm: any) => elm.title === title,
       );
+
       if (selectedItem) {
         (selectedItem.count = count),
           (selectedItem.stop = limit.stop),
@@ -256,10 +252,13 @@ const Counter = ({route, navigation}) => {
       }
 
       await saveValueForAsync('saved', JSON.stringify(currentSavedItems));
-      setMessage('Kaydedildi');
       setTimeout(() => {
         clearMessage();
       }, 2000);
+      const message = selectedItem
+        ? `${title} üzerine kaydedildi`
+        : 'Kaydedildi';
+      alert(message);
     } catch (error) {
       alert('Kaydederken hata oldu!');
     } finally {
@@ -360,15 +359,15 @@ const Counter = ({route, navigation}) => {
                     marginRight={sizes.xs}
                     keyboardType="number-pad"
                     placeholder="Dur"
-                    value={limit.stop}
+                    value={limit.stop.toString()}
                     success={Boolean(+limit.stop > 0)}
-                    onChangeText={(value) => handleChange({stop: value})}
+                    onChangeText={(value) => handleStop(value)}
                   />
                 </Block>
                 <Block>
                   <Input
                     label="Uyar"
-                    value={limit.warn}
+                    value={limit.warn.toString()}
                     autoCapitalize="none"
                     marginBottom={sizes.m}
                     marginLeft={sizes.xs}
@@ -378,7 +377,7 @@ const Counter = ({route, navigation}) => {
                     danger={Boolean(
                       +limit.stop > 0 && +limit.stop < +limit.warn,
                     )}
-                    onChangeText={(value) => handleChange({warn: value})}
+                    onChangeText={(value) => handleWarn(value)}
                   />
                 </Block>
               </Block>
