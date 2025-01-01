@@ -1,65 +1,33 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import {
-  Animated,
-  Dimensions,
-  Platform,
-  BackHandler,
-  TouchableOpacity,
-  Vibration,
-  View,
-  Alert,
-} from 'react-native';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
+import {Dimensions, Platform, TouchableOpacity, Vibration} from 'react-native';
 
-import {useData, useTheme, useTranslation} from '../hooks/';
-import * as regex from '../constants/regex';
-import {
-  Block,
-  Button,
-  Input,
-  Image,
-  Text,
-  Checkbox,
-  Switch,
-  Modal,
-} from '../components/';
 import {Ionicons} from '@expo/vector-icons';
-import {
-  clearStorageAsync,
-  getValueFromAsync,
-  saveValueForAsync,
-} from '../utils/storageFunctions';
-import {DataContext} from '../context/DataContext';
 import dayjs from 'dayjs';
-import useStateCallback from '../hooks/useStateCallback';
-import {useIsFocused} from '@react-navigation/native';
-import {Stopwatch, Timer} from 'react-native-stopwatch-timer';
+import {Stopwatch} from 'react-native-stopwatch-timer';
+import {Block, Button, Input, Modal, Switch, Text} from '../components/';
+import {DataContext} from '../context/DataContext';
+import {useTheme} from '../hooks/';
+import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
+import {Audio} from 'expo-av';
+import {SOUND} from '../constants/theme';
+import {delay} from '../utils/helpers';
 
 const isAndroid = Platform.OS === 'android';
-const {width, height} = Dimensions.get('window');
 interface Limit {
   stop: number;
   warn: number;
+  isWarnAtMulitply: boolean;
 }
 // @pattern wait/vibrate/wait in ms
 const WARN_PATTERN = [0, 400, 200];
 const STOP_PATTERN = [0, 600, 200];
 
 const Counter = ({route, navigation}) => {
-  const isFocused = useIsFocused();
-
   const {settings} = useContext(DataContext);
 
   const item = route?.params?.item || undefined;
 
-  const {assets, colors, gradients, sizes} = useTheme();
-
-  const {t} = useTranslation();
+  const {colors, gradients, sizes} = useTheme();
 
   const [count, setCount] = useState(0);
   const [isHideCounter, setIsHideCounter] = useState<boolean>(false);
@@ -67,17 +35,11 @@ const Counter = ({route, navigation}) => {
   const [limit, setLimit] = useState<Limit>({
     stop: 0,
     warn: 0,
+    isWarnAtMulitply: false,
   });
-  const [isWarnAtMulitply, setIsWarnAtMulitply] = useState(false);
   const [message, setMessage] = useState<string>('');
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState('');
-
-  const latestCountStateRef = React.useRef({
-    count: 0,
-    limit: 0,
-    stop: 0,
-  });
 
   const [isStopwatchStart, setIsStopwatchStart] = useState<boolean>(false);
   const [resetStopwatch, setResetStopwatch] = useState<boolean>(false);
@@ -88,6 +50,7 @@ const Counter = ({route, navigation}) => {
         item.count,
         item.stop || 0,
         item.warn || 0,
+        item.isWarnAtMulitply || false,
         item?.title,
       );
     } else {
@@ -95,6 +58,8 @@ const Counter = ({route, navigation}) => {
         const _count = parseInt((await getValueFromAsync('count')) || '0');
         const _stop = parseInt((await getValueFromAsync('stop')) || '0');
         const _warn = parseInt((await getValueFromAsync('warn')) || '0');
+        const _isWarnAtMulitply =
+          (await getValueFromAsync('isWarnAtMulitply')) === 'true';
 
         console.log('storage', {
           _count,
@@ -102,7 +67,7 @@ const Counter = ({route, navigation}) => {
           _warn,
         });
 
-        handleInitialLoad(_count, _stop, _warn, '');
+        handleInitialLoad(_count, _stop, _warn, _isWarnAtMulitply, '');
       })();
     }
 
@@ -139,10 +104,11 @@ const Counter = ({route, navigation}) => {
     count: number,
     stop: number,
     warn: number,
+    isWarnAtMulitply: boolean,
     title: string,
   ) => {
     setCount(count);
-    setLimit((state) => ({...state, stop, warn}));
+    setLimit((state) => ({...state, stop, warn, isWarnAtMulitply}));
     setTitle(title);
   };
 
@@ -165,12 +131,21 @@ const Counter = ({route, navigation}) => {
     [setLimit],
   );
 
-  const handleChangeWarnMultiply = () => {
+  const handleChangeWarnMultiply = useCallback(async () => {
     if (!limit.warn || limit.warn === 0) {
       return;
     }
-    setIsWarnAtMulitply(!isWarnAtMulitply);
-  };
+
+    await saveValueForAsync(
+      'isWarnAtMulitply',
+      limit.isWarnAtMulitply ? 'false' : 'true',
+    );
+
+    setLimit((state) => ({
+      ...state,
+      isWarnAtMulitply: !state.isWarnAtMulitply,
+    }));
+  }, [limit, setLimit]);
 
   const handleCountChange = async () => {
     console.log('count', {count, limit, message});
@@ -178,9 +153,16 @@ const Counter = ({route, navigation}) => {
     if (message) {
       clearMessage();
     }
+
+    if (settings.counterSound) {
+      const {sound: counterSound} = await Audio.Sound.createAsync(SOUND.click);
+      await counterSound.playAsync();
+    }
+
     if (+limit.stop > 0 && +limit.stop === count) {
       return;
     }
+
     if (+limit.stop > 0 && +limit.stop === count + 1) {
       setMessage('Tamamladınız!');
       await saveValueForAsync('count', (count + 1).toString());
@@ -194,6 +176,16 @@ const Counter = ({route, navigation}) => {
           Vibration.cancel();
         }, 1400);
       }
+
+      if (settings?.warnSound) {
+        await delay(50);
+
+        const {sound: completedSound} = await Audio.Sound.createAsync(
+          SOUND.complered,
+        );
+        await completedSound.playAsync();
+      }
+
       return;
     }
     if (+limit.warn > 0 && +limit.warn === count + 1) {
@@ -205,7 +197,13 @@ const Counter = ({route, navigation}) => {
           Vibration.cancel();
         }, 900);
       }
-    } else if (isWarnAtMulitply && (count + 1) % +limit.warn == 0) {
+      if (settings?.warnSound) {
+        await delay(50);
+
+        const {sound: warnSound} = await Audio.Sound.createAsync(SOUND.warn);
+        await warnSound.playAsync();
+      }
+    } else if (limit.isWarnAtMulitply && (count + 1) % +limit.warn == 0) {
       setMessage('Uyarı limitinin katına ulaşatınız!');
       if (settings?.warnVibrate) {
         Vibration.vibrate(WARN_PATTERN, true);
@@ -213,11 +211,17 @@ const Counter = ({route, navigation}) => {
           Vibration.cancel();
         }, 900);
       }
+      if (settings?.warnSound) {
+        await delay(50);
+        const {sound: warnSound} = await Audio.Sound.createAsync(SOUND.warn);
+        await warnSound.playAsync();
+      }
     }
 
     await saveValueForAsync('count', (count + 1).toString());
     setCount(count + 1);
   };
+
   const onLongResetPress = async () => {
     await saveValueForAsync('count', count.toString());
     setCount(0);
@@ -391,6 +395,7 @@ const Counter = ({route, navigation}) => {
                       setLimit({
                         stop: '',
                         warn: '',
+                        isWarnAtMulitply: false,
                       })
                     }
                     shadow={!isAndroid}>
@@ -406,7 +411,7 @@ const Counter = ({route, navigation}) => {
                     Katlarında Uyar
                   </Text>
                   <Switch
-                    checked={isWarnAtMulitply}
+                    checked={limit.isWarnAtMulitply}
                     onPress={handleChangeWarnMultiply}
                   />
                 </Block>
@@ -446,8 +451,8 @@ const Counter = ({route, navigation}) => {
                     height={150}
                     marginHorizontal={sizes.sm}
                     outlined={String(colors.gray)}>
-                    <Ionicons size={60} color={colors.white}>
-                      {isHideCounter ? '' : count}
+                    <Ionicons size={60} color={colors.text}>
+                      {isHideCounter ? '...' : count}
                     </Ionicons>
                   </Button>
                   {settings?.hideCounterBtn && (
@@ -513,8 +518,9 @@ const Counter = ({route, navigation}) => {
                     <Ionicons
                       size={20}
                       name="return-down-back-sharp"
-                      color={colors.secondary}
+                      color={colors.text}
                     />
+                    <Text color={colors.text}>Sil</Text>
                   </Button>
 
                   <Button
@@ -525,8 +531,9 @@ const Counter = ({route, navigation}) => {
                     <Ionicons
                       size={20}
                       name="save-outline"
-                      color={colors.secondary}
+                      color={colors.text}
                     />
+                    <Text color={colors.text}>Kaydet</Text>
                   </Button>
                 </Block>
               </Block>
@@ -551,7 +558,7 @@ const Counter = ({route, navigation}) => {
                     <Ionicons
                       size={30}
                       name="return-down-back"
-                      color={colors.secondary}
+                      color={colors.icon}
                     />
                   </TouchableOpacity>
 
@@ -572,7 +579,7 @@ const Counter = ({route, navigation}) => {
                       },
                       text: {
                         fontSize: 25,
-                        color: '#FFF',
+                        color: colors.text,
                       },
                     }}
                   />
@@ -586,7 +593,7 @@ const Counter = ({route, navigation}) => {
                       name={
                         isStopwatchStart ? 'stopwatch' : 'stopwatch-outline'
                       }
-                      color={colors.secondary}
+                      color={colors.icon}
                     />
                   </TouchableOpacity>
                 </Block>

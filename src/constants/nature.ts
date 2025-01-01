@@ -6,7 +6,7 @@ import {
   ThemeSpacing,
 } from './types';
 
-import { THEME as commonTheme } from './theme';
+import {THEME as commonTheme} from './theme';
 
 export const COLORS: ThemeColors = {
   // default text color
@@ -96,8 +96,6 @@ export const GRADIENTS: ThemeGradients = {
     'rgba(255, 255, 255, 0.2)',
   ],
 };
-
-
 
 export const THEME: ITheme = {
   ...commonTheme,

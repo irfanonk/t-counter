@@ -7,7 +7,7 @@ import {Block, Button, Image, Switch, Text} from '../components';
 import {useData, useTheme, useTranslation} from '../hooks';
 import {saveValueForAsync, clearStorageAsync} from '../utils/storageFunctions';
 import {DataContext} from '../context/DataContext';
-import {light, dark, warm, nature, original, sky} from '../constants';
+import {light, dark, warm, nature, original, sky, black} from '../constants';
 import Constants from 'expo-constants';
 import appJson from '../../app.json';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -16,6 +16,8 @@ const isAndroid = Platform.OS === 'android';
 export interface Settings {
   warnVibrate: boolean;
   counterVibrate: boolean;
+  warnSound: boolean;
+  counterSound: boolean;
 }
 const COLORS = [
   {
@@ -41,6 +43,10 @@ const COLORS = [
   {
     title: 'sky',
     color: sky.colors.background,
+  },
+  {
+    title: 'black',
+    color: black.colors.background,
   },
 ];
 const Settings = () => {
@@ -109,7 +115,7 @@ const Settings = () => {
               ) : (
                 <>
                   <Block row flex={0} align="center" justify="space-between">
-                    <Text>Uyarı titreşimi </Text>
+                    <Text>Uyarı limitine gelince titre </Text>
                     <Switch
                       checked={settings?.warnVibrate}
                       onPress={() => handleSettings('warnVibrate')}
@@ -121,7 +127,19 @@ const Settings = () => {
                     align="center"
                     justify="space-between"
                     marginTop={sizes.s}>
-                    <Text>Sayaç titreşimi </Text>
+                    <Text>Uyarı limitine gelince ses çal </Text>
+                    <Switch
+                      checked={settings?.warnSound}
+                      onPress={() => handleSettings('warnSound')}
+                    />
+                  </Block>
+                  <Block
+                    row
+                    flex={0}
+                    align="center"
+                    justify="space-between"
+                    marginTop={sizes.s}>
+                    <Text>Sayaça her tıkladığımda titre </Text>
                     <Switch
                       checked={settings?.counterVibrate}
                       onPress={() => handleSettings('counterVibrate')}
@@ -133,7 +151,19 @@ const Settings = () => {
                     align="center"
                     justify="space-between"
                     marginTop={sizes.s}>
-                    <Text>Sayaç göster/gizle butonu </Text>
+                    <Text>Sayaça her tıkladığımda ses çal </Text>
+                    <Switch
+                      checked={settings?.counterSound}
+                      onPress={() => handleSettings('counterSound')}
+                    />
+                  </Block>
+                  <Block
+                    row
+                    flex={0}
+                    align="center"
+                    justify="space-between"
+                    marginTop={sizes.s}>
+                    <Text>Sayaç göster/gizle butonunu göster </Text>
                     <Switch
                       checked={settings?.hideCounterBtn}
                       onPress={() => handleSettings('hideCounterBtn')}
@@ -145,7 +175,7 @@ const Settings = () => {
                     align="center"
                     justify="space-between"
                     marginTop={sizes.s}>
-                    <Text>Kronometre </Text>
+                    <Text>Kronometreyi göster </Text>
                     <Switch
                       checked={settings?.stopWatch || false}
                       onPress={() => handleSettings('stopWatch')}
@@ -174,10 +204,11 @@ const Settings = () => {
                     align="center"
                     justify="space-between"
                     marginTop={sizes.s}>
-                    <Block>
-                      <Text>Tema </Text>
+                    <Block row wrap="wrap">
+                      <Text>Tema - </Text>
+                      <Text>{themeType} </Text>
                     </Block>
-                    <Block row>
+                    <Block row wrap="wrap">
                       {COLORS.map((color) => {
                         return (
                           <Button

@@ -35,9 +35,9 @@ export const clearStorageAsync = async () => {
 };
 
 export async function lookAtStorageAsync() {
-  AsyncStorage.getAllKeys((err, keys) => {
-    AsyncStorage.multiGet(keys, (error, stores) => {
-      stores.map((result, i, store) => {
+  AsyncStorage.getAllKeys((_, keys) => {
+    AsyncStorage.multiGet(keys, (_, stores) => {
+      stores?.map((_, i, store) => {
         console.log({[store[i][0]]: store[i][1]});
         return true;
       });

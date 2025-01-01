@@ -10,7 +10,7 @@ import {
   ITheme,
 } from '../constants/types';
 
-import {light, dark, warm, nature, original, sky} from '../constants';
+import {light, dark, warm, nature, original, sky, black} from '../constants';
 import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
 
 export const DataContext = React.createContext({});
@@ -81,6 +81,8 @@ export const DataProvider = ({children}: {children: React.ReactNode}) => {
         ? original
         : themeType === 'sky'
         ? sky
+        : themeType === 'black'
+        ? black
         : light;
     setTheme(_theme);
   }, [themeType]);

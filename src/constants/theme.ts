@@ -1,4 +1,4 @@
-import { Dimensions, Platform } from 'react-native';
+import {Dimensions, Platform} from 'react-native';
 import {
   ICommonTheme,
   ThemeAssets,
@@ -11,7 +11,7 @@ import {
   ThemeSpacing,
 } from './types';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 // Naming source: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight#Common_weight_name_mapping
 export const WEIGHTS: ThemeWeights = {
@@ -84,8 +84,6 @@ export const ASSETS: ThemeAssets = {
   // backgrounds/logo
   logo: require('../assets/images/logo.png'),
   background: require('../assets/images/background.png'),
-
-
 };
 
 export const FONTS: ThemeFonts = {
@@ -122,7 +120,6 @@ export const LINE_HEIGHTS: ThemeLineHeights = {
   h6: 20,
   p: 18,
 };
-
 
 export const SIZES: ThemeSizes = {
   // global sizes
@@ -207,12 +204,17 @@ export const SPACING: ThemeSpacing = {
   xxl: SIZES.base * 7,
 };
 
+export const SOUND = {
+  click: require('../assets/sounds/click.mp3'),
+  warn: require('../assets/sounds/warn.mp3'),
+  complered: require('../assets/sounds/completed.mp3'),
+};
+
 export const THEME: ICommonTheme = {
   icons: ICONS,
-  assets: { ...ICONS, ...ASSETS },
+  assets: {...ICONS, ...ASSETS},
   fonts: FONTS,
   weights: WEIGHTS,
   lines: LINE_HEIGHTS,
-
-  sizes: { ...SIZES, ...SPACING },
+  sizes: {...SIZES, ...SPACING},
 };
