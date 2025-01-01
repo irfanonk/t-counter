@@ -205,9 +205,9 @@ export const SPACING: ThemeSpacing = {
 };
 
 export const SOUND = {
-  click: require('../assets/sounds/click.mp3'),
+  count: require('../assets/sounds/count.mp3'),
   warn: require('../assets/sounds/warn.mp3'),
-  complered: require('../assets/sounds/completed.mp3'),
+  completed: require('../assets/sounds/completed.mp3'),
 };
 
 export const THEME: ICommonTheme = {

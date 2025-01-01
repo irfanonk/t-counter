@@ -11,6 +11,7 @@ import {getValueFromAsync, saveValueForAsync} from '../utils/storageFunctions';
 import {Audio} from 'expo-av';
 import {SOUND} from '../constants/theme';
 import {delay} from '../utils/helpers';
+import {playSound} from '../utils/sound';
 
 const isAndroid = Platform.OS === 'android';
 interface Limit {
@@ -43,6 +44,8 @@ const Counter = ({route, navigation}) => {
 
   const [isStopwatchStart, setIsStopwatchStart] = useState<boolean>(false);
   const [resetStopwatch, setResetStopwatch] = useState<boolean>(false);
+
+  const [savedCounts, setSavedCounts] = useState([]);
 
   useEffect(() => {
     if (item) {
@@ -100,6 +103,13 @@ const Counter = ({route, navigation}) => {
   //   return () => backHandler.remove();
   // }, []);
 
+  const onOpenSave = async () => {
+    const _savedCounts =
+      JSON.parse((await getValueFromAsync('saved')) as string) || [];
+    setSavedCounts(_savedCounts);
+    setModalVisible(true);
+  };
+
   const handleInitialLoad = (
     count: number,
     stop: number,
@@ -148,19 +158,18 @@ const Counter = ({route, navigation}) => {
   }, [limit, setLimit]);
 
   const handleCountChange = async () => {
-    console.log('count', {count, limit, message});
-
     if (message) {
       clearMessage();
     }
 
-    if (settings.counterSound) {
-      const {sound: counterSound} = await Audio.Sound.createAsync(SOUND.click);
-      await counterSound.playAsync();
-    }
-
     if (+limit.stop > 0 && +limit.stop === count) {
       return;
+    }
+
+    if (settings.counterSound) {
+      // const {sound: counterSound} = await Audio.Sound.createAsync(SOUND.count);
+      // await counterSound.playAsync();
+      await playSound(SOUND.count);
     }
 
     if (+limit.stop > 0 && +limit.stop === count + 1) {
@@ -180,10 +189,11 @@ const Counter = ({route, navigation}) => {
       if (settings?.warnSound) {
         await delay(50);
 
-        const {sound: completedSound} = await Audio.Sound.createAsync(
-          SOUND.complered,
-        );
-        await completedSound.playAsync();
+        // const {sound: completedSound} = await Audio.Sound.createAsync(
+        //   SOUND.complered,
+        // );
+        // await completedSound.playAsync();
+        await playSound(SOUND.completed);
       }
 
       return;
@@ -200,8 +210,9 @@ const Counter = ({route, navigation}) => {
       if (settings?.warnSound) {
         await delay(50);
 
-        const {sound: warnSound} = await Audio.Sound.createAsync(SOUND.warn);
-        await warnSound.playAsync();
+        // const {sound: warnSound} = await Audio.Sound.createAsync(SOUND.warn);
+        // await warnSound.playAsync();
+        await playSound(SOUND.warn);
       }
     } else if (limit.isWarnAtMulitply && (count + 1) % +limit.warn == 0) {
       setMessage('Uyarı limitinin katına ulaşatınız!');
@@ -213,8 +224,9 @@ const Counter = ({route, navigation}) => {
       }
       if (settings?.warnSound) {
         await delay(50);
-        const {sound: warnSound} = await Audio.Sound.createAsync(SOUND.warn);
-        await warnSound.playAsync();
+        // const {sound: warnSound} = await Audio.Sound.createAsync(SOUND.warn);
+        // await warnSound.playAsync();
+        await playSound(SOUND.warn);
       }
     }
 
@@ -230,7 +242,6 @@ const Counter = ({route, navigation}) => {
   };
 
   const onSavePress = async () => {
-    console.log('time', dayjs().unix());
     if (!title) return setModalVisible(false);
 
     try {
@@ -260,8 +271,8 @@ const Counter = ({route, navigation}) => {
         clearMessage();
       }, 2000);
       const message = selectedItem
-        ? `${title} üzerine kaydedildi`
-        : 'Kaydedildi';
+        ? `${title} güncellendi`
+        : `${title} kaydedildi`;
       alert(message);
     } catch (error) {
       alert('Kaydederken hata oldu!');
@@ -293,7 +304,8 @@ const Counter = ({route, navigation}) => {
               value={title}
               onChangeText={(value) => setTitle(value)}
             />
-            <Block marginTop={sizes.xl} flex={0} row center>
+
+            <Block marginTop={sizes.base} flex={0} row center>
               <Button
                 onPress={onSavePress}
                 width={'50%'}
@@ -311,6 +323,18 @@ const Counter = ({route, navigation}) => {
                   İptal
                 </Text>
               </Button>
+            </Block>
+          </Block>
+          <Block marginTop={sizes.xl}>
+            <Text color={colors.text}> Kayıt Seç </Text>
+            <Block collapsable>
+              {savedCounts.map((item, index) => (
+                <Block>
+                  <TouchableOpacity onPress={() => setTitle(item.title)}>
+                    <Text> {item?.title} </Text>
+                  </TouchableOpacity>
+                </Block>
+              ))}
             </Block>
           </Block>
         </Block>
@@ -524,7 +548,7 @@ const Counter = ({route, navigation}) => {
                   </Button>
 
                   <Button
-                    onPress={() => setModalVisible(true)}
+                    onPress={onOpenSave}
                     outlined
                     gray
                     shadow={!isAndroid}>
